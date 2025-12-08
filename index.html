@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IdioMona: Испанские Идиомы (Бесплатно)</title>
+    <title>IdioMona: Испанские Идиомы</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div id="app">
 
-        <header>
+        <header id="main-header">
             <div class="logo">IdioMona 🐒</div>
         </header>
 
         <div id="screen-idioms" class="screen active">
             <h2>📚 Каталог Идиом</h2>
             <input type="text" id="search-input" placeholder="🔍 Поиск идиом...">
-            <div id="topic-filters" class="filters">
-                </div>
             <div id="idiom-list" class="content-list">
                 </div>
         </div>
@@ -32,28 +31,20 @@
 
         <div id="screen-add-exercises" class="screen">
              <h2>🏋️ Дополнительные Упражнения</h2>
-             <p>1. Упражнения на случайную идиому</p>
-             <p>2. Тексты с использованием идиом</p>
-             <p>3. Предложения для самостоятельного перевода</p>
-             <p>Здесь будет логика для запуска этих упражнений.</p>
-        </div>
+             </div>
 
         <div id="screen-profile" class="screen">
             <h2>👤 Профиль</h2>
-            <h3>📈 Мой Прогресс</h3>
-            <p>Изучено идиом: 0/5 (заглушка)</p>
-            <p>Средний балл: 0% (заглушка)</p>
-            <hr>
-            <button onclick="window.open('https://t.me/your_school_chat', '_blank')">💬 Чат с преподавателем (Telegram)</button>
-            <hr>
-            <p>О приложении | Настройки</p>
-        </div>
+            </div>
+
+        <div id="screen-detail" class="screen detail-screen">
+            </div>
 
         <nav id="bottom-nav">
-            <button data-screen="idioms" class="active">📚 Идиомы</button>
-            <button data-screen="favorites">⭐ Избранное</button>
-            <button data-screen="add-exercises">🏋️ Упражнения</button>
-            <button data-screen="profile">👤 Профиль</button>
+            <button data-screen="idioms" class="active">📖 Идиомы</button>
+            <button data-screen="favorites">🤍 Избранное</button>
+            <button data-screen="add-exercises">🧠 Доп. Упражнения</button>
+            <button data-screen="profile">🔒 Профиль</button>
         </nav>
     </div>
 
