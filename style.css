@@ -1,6 +1,6 @@
-/* Общие стили */
+/* --- Глобальные и базовые стили --- */
 body {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif;
     margin: 0;
     background-color: #f4f7f9;
 }
@@ -10,22 +10,21 @@ body {
     margin: 0 auto;
     background-color: white;
     min-height: 100vh;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
 }
 
-/* Шапка */
-header {
-    background-color: #FF6B6B; /* Яркий, смелый цвет */
-    color: white;
+/* --- Навигация и хедер --- */
+#main-header {
+    background-color: #B1E1FF; /* Светло-голубой фон */
+    color: #333;
     padding: 15px;
     text-align: center;
     font-size: 1.5em;
     font-weight: bold;
 }
 
-/* Нижняя навигация */
 #bottom-nav {
     display: flex;
     justify-content: space-around;
@@ -34,27 +33,31 @@ header {
     background-color: white;
     position: sticky;
     bottom: 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
 }
 
 #bottom-nav button {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 0.9em;
-    color: #888;
+    font-size: 0.75em;
+    color: #999;
     padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #bottom-nav button.active {
-    color: #FF6B6B;
+    color: #4CAF50; /* Зеленый цвет для активной вкладки */
     font-weight: bold;
 }
 
-/* Стили экранов */
+/* --- Общие стили экранов --- */
 .screen {
     padding: 15px;
     display: none;
-    flex-grow: 1; /* Чтобы экраны занимали все доступное место */
+    flex-grow: 1;
     overflow-y: auto;
 }
 
@@ -62,71 +65,132 @@ header {
     display: block;
 }
 
-/* Стили списка и карточек */
-.content-list {
-    margin-top: 15px;
+/* --- Стили детальной карточки (Detail Screen) --- */
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    background-color: white;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-.idiom-card {
-    display: flex;
-    align-items: center;
-    background-color: #f9f9f9;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 8px;
+.detail-header button {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #333;
     cursor: pointer;
-    border-left: 5px solid #FF6B6B;
-    position: relative;
 }
 
-.idiom-card.locked {
-    opacity: 0.5; /* Заблокированный контент */
+.detail-content {
+    padding: 0 15px 15px;
 }
 
-.meme-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-    background-color: #a0d9b4; /* Заглушка цвета */
+.meme-image-container {
+    width: 100%;
+    height: 250px;
+    background-color: #B1E1FF; /* Фон для иллюстрации */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 -15px 15px -15px; /* Захват полной ширины */
+}
+
+.idiom-title-block {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin-bottom: 5px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 1.2em;
 }
 
-.idiom-text {
-    flex-grow: 1;
-    font-weight: 600;
-}
-
-.favorite-icon {
+.audio-icon {
+    font-size: 0.7em;
+    color: #999;
     margin-left: 10px;
+}
+
+.content-line {
+    margin-bottom: 10px;
+}
+
+.content-line span {
+    font-weight: 700;
+    color: #555;
+    display: block;
+}
+
+.example-text {
+    font-style: italic;
+    color: #777;
+}
+
+.exercises-title {
+    font-size: 1.4em;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.exercise-block {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.exercise-block h4 {
+    margin: 0 0 5px;
+    font-size: 0.9em;
     color: #FF6B6B;
 }
 
-/* Экран разблокировки */
-.modal {
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.95);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 1000;
-    display: none;
-    padding: 20%;
-    box-sizing: border-box;
+.exercise-block p {
+    font-size: 0.8em;
+    margin: 0 0 10px;
+    line-height: 1.2;
+    min-height: 3em; /* для выравнивания */
 }
 
-#buy-button {
-    background-color: #4CAF50;
+.exercise-block button {
+    background-color: #007bff;
     color: white;
     border: none;
-    padding: 15px 30px;
-    border-radius: 25px;
+    padding: 5px;
+    border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
-    font-size: 1.1em;
+    font-size: 0.8em;
+    margin-top: auto;
+}
+
+/* Стили для упражнений внутри блоков */
+.radio-options label {
+    display: block;
+    font-size: 0.8em;
+}
+
+.matching-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    font-size: 0.75em;
+    gap: 2px;
+}
+
+.matching-list span {
+    background-color: #eee;
+    padding: 3px;
+    border-radius: 3px;
+    text-align: center;
 }
