@@ -4,87 +4,114 @@
   <meta charset="UTF-8">
   <title>Испанские идиомы</title>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    button { padding: 10px 20px; margin: 10px; font-size: 16px; }
-    .card { border: 1px solid #ccc; padding: 20px; margin: 20px auto; width: 400px; }
- </style>
+    body {
+      font-family: "Comic Sans MS", Arial, sans-serif;
+      background: linear-gradient(135deg, #6EE7B7, #3B82F6);
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 42px;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px #0003;
+    }
+    button {
+      background: #FBBF24;
+      border: none;
+      border-radius: 12px;
+      padding: 16px 24px;
+      margin: 12px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: scale(1.1);
+      background: #F59E0B;
+    }
+    .card {
+      background: #fff;
+      color: #333;
+      border-radius: 16px;
+      padding: 24px;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 500px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+      font-size: 22px;
+    }
+    .opts button {
+      background: #10B981;
+      color: #fff;
+      margin: 8px;
+    }
+    .opts button:hover {
+      background: #059669;
+    }
+  </style>
 </head>
 <body>
   <h1>🇪🇸 Учим испанские идиомы</h1>
-
   <button onclick="showIdiom()">Случайная идиома</button>
   <button onclick="showExercise()">Упражнение</button>
   <button onclick="showTest()">Тест</button>
-
   <div id="content"></div>
 
   <script>
     const idioms = [
-      {
-        idiom: "Estar en las nubes",
-        translation: "Быть в облаках (мечтать, отвлекаться)",
+      { idiom: "Estar en las nubes", translation: "Быть в облаках (мечтать, отвлекаться)",
         example: "Juan siempre está en las nubes durante la clase.",
         exercise: "Заполни пропуск: Juan siempre está ___ las nubes durante la clase.",
-        options: ["en", "sobre", "bajo"],
-        answer: "en"
-      },
-      {
-        idiom: "Más vale tarde que nunca",
-        translation: "Лучше поздно, чем никогда",
+        options: ["en", "sobre", "bajo"], answer: "en" },
+      { idiom: "Más vale tarde que nunca", translation: "Лучше поздно, чем никогда",
         example: "Llegó tarde, pero más vale tarde que nunca.",
         exercise: "Как перевести: 'Лучше поздно, чем никогда'?",
         options: ["Más vale tarde que nunca", "Nunca es tarde", "Vale más temprano"],
-        answer: "Más vale tarde que nunca"
-      },
-      {
-        idiom: "No tener pelos en la lengua",
-        translation: "Говорить прямо, без фильтра",
-        example: "María no tiene pelos en la lengua y siempre dice lo que piensa.",
-        exercise: "Что значит 'No tener pelos en la lengua'?",
-        options: ["Говорить прямо", "Молчать", "Быть в облаках"],
-        answer: "Говорить прямо"
-      }
+        answer: "Más vale tarde que nunca" }
     ];
 
-    function pick() { return idioms[Math.floor(Math.random() * idioms.length)]; }
+    function pick() { return idioms[Math.floor(Math.random()*idioms.length)]; }
 
     function showIdiom() {
       const d = pick();
       document.getElementById("content").innerHTML =
         `<div class="card">
-           <h2>${d.idiom}</h2>
-           <p><b>Перевод:</b> ${d.translation}</p>
-           <p><b>Пример:</b> ${d.example}</p>
-         </div>`;
+          <h2>${d.idiom}</h2>
+          <p><b>Перевод:</b> ${d.translation}</p>
+          <p><b>Пример:</b> ${d.example}</p>
+        </div>`;
     }
 
     function showExercise() {
       const d = pick();
       document.getElementById("content").innerHTML =
         `<div class="card">
-           <h2>📝 Упражнение</h2>
-           <p>${d.exercise}</p>
-           <input id="answer" placeholder="Ваш ответ">
-           <button onclick="checkAnswer('${d.answer}')">Проверить</button>
-         </div>`;
+          <h2>📝 Упражнение</h2>
+          <p>${d.exercise}</p>
+          <input id="answer" placeholder="Ваш ответ" style="font-size:20px; padding:8px;">
+          <button onclick="checkAnswer('${d.answer}')">Проверить</button>
+        </div>`;
     }
 
     function showTest() {
       const d = pick();
-      const optionsHtml = d.options.map(opt =>
-        `<button onclick="checkAnswer('${d.answer}', '${opt}')">${opt}</button>`
-      ).join(" ");
+      const opts = d.options.map(opt =>
+        `<button onclick="checkAnswer('${d.answer}','${opt}')">${opt}</button>`
+      ).join("");
       document.getElementById("content").innerHTML =
         `<div class="card">
-           <h2>❓ Тест</h2>
-           <p>${d.exercise}</p>
-           ${optionsHtml}
-         </div>`;
+          <h2>❓ Тест</h2>
+          <p>${d.exercise}</p>
+          <div class="opts">${opts}</div>
+        </div>`;
     }
 
     function checkAnswer(correct, userInput=null) {
-      const answer = userInput || document.getElementById("answer").value;
-      alert(answer.toLowerCase() === correct.toLowerCase() ? "✅ Правильно!" : "❌ Неправильно. Правильный ответ: " + correct);
+      const val = userInput || document.getElementById("answer").value;
+      alert(val.toLowerCase() === correct.toLowerCase() ? "✅ Правильно!" : "❌ Неправильно. Ответ: " + correct);
     }
   </script>
 </body>
