@@ -1,7 +1,6 @@
 // =================================================================
 // 1. ДАННЫЕ ПРИЛОЖЕНИЯ (IDIOM_DATA)
-//    В реальном приложении этот массив будет загружаться через AJAX/Fetch 
-//    или из JSON-файла, сгенерированного в Colab.
+//    ВАЖНО: Добавлено поле 'meme_url' для сгенерированных изображений
 // =================================================================
 
 // Заглушка для других идиом, чтобы заполнить каталог
@@ -18,10 +17,10 @@ const IDIOM_DATA_SINGLE = {
     "literalTranslation": "Быть съеденным хлебом",
     "meaning": "Быть очень легким, пустяковым делом, проще простого.",
     "example": "No te preocupes por el examen de matemáticas, ¡será pan comido!",
-    "meme": "🍞", // Оставляем эмодзи как запасной вариант
-    "meme_url": "/assets/images/ser_pan_comido.jpg", // <--- ДОБАВЛЕНО! Ссылка на ваш файл
-    "audio_idiom_url": "/assets/audio/ser_pan_comido.mp3", 
-    "audio_example_url": "/assets/audio/example_pan_comido.mp3", 
+    "meme": "🍞", // Запасной эмодзи
+    "meme_url": "/assets/images/ser_pan_comido.jpg", // <--- ССЫЛКА НА ВАШ КАДР ИЗ ФИЛЬМА
+    "audio_idiom_url": "/assets/audio/ser_pan_comido.mp3", // Заглушка
+    "audio_example_url": "/assets/audio/example_pan_comido.mp3", // Заглушка
     "topic": "Характер",
     "exercises": [
         {
@@ -76,7 +75,7 @@ const IDIOM_DATA_SINGLE = {
 const IDIOM_DATA = [IDIOM_DATA_SINGLE, ...OTHER_IDIOMS];
 
 let currentFavorites = [1]; 
-let userName = "Ученик"; // Заглушка для имени
+let userName = "Ученик"; 
 
 // =================================================================
 // 2. ФУНКЦИИ УПРАВЛЕНИЯ ЭКРАНАМИ И НАВИГАЦИЕЙ
@@ -88,7 +87,6 @@ function showScreen(screenId) {
     });
     document.getElementById(screenId).classList.add('active');
     
-    // Обновление активной кнопки навигации
     document.querySelectorAll('#bottom-nav button').forEach(button => {
         button.classList.remove('active');
         if (button.getAttribute('data-screen') === screenId.replace('screen-', '')) {
@@ -96,13 +94,10 @@ function showScreen(screenId) {
         }
     });
 
-    // Управление видимостью главного заголовка
     document.getElementById('main-header').style.display = (screenId === 'screen-detail') ? 'none' : 'block';
 
-    // Рендеринг контента при переходе
     if (screenId === 'screen-catalog') renderIdioms();
     if (screenId === 'screen-favorites') renderFavorites();
-    // if (screenId === 'screen-dashboard') renderDashboard(); // Рендерится при загрузке
 }
 
 // =================================================================
@@ -111,9 +106,14 @@ function showScreen(screenId) {
 
 function renderDashboard() {
     const dashboardScreen = document.getElementById('screen-dashboard');
-    const isNewUser = false; // Логика проверки первого входа
+    const isNewUser = false; 
     const mainActionText = isNewUser ? "🚀 Начать обучение" : "📚 Продолжить обучение";
     
+    // Определяем, что отобразить в "Идиоме дня": изображение или эмодзи
+    const idiomOfDayContent = IDIOM_DATA_SINGLE.meme_url ? 
+        `<img src="${IDIOM_DATA_SINGLE.meme_url}" alt="Идиома дня" style="height: 50px; width: 50px; object-fit: cover; border-radius: 8px;">` :
+        `<span class="meme-icon">${IDIOM_DATA_SINGLE.meme}</span>`;
+        
     dashboardScreen.innerHTML = `
         <div class="dashboard-greeting">
             <h1>Привет, ${userName}!</h1>
@@ -128,7 +128,7 @@ function renderDashboard() {
         <div class="dashboard-block idiom-of-day" onclick="renderDetailScreen(IDIOM_DATA[0])">
             <div class="block-title">✨ Идиома Дня</div>
             <div class="block-content">
-                <span class="meme-icon">${IDIOM_DATA_SINGLE.meme}</span>
+                ${idiomOfDayContent}
                 <span class="idiom-text-day">${IDIOM_DATA_SINGLE.text}</span>
                 <span class="audio-icon">🔊</span>
             </div>
@@ -160,8 +160,9 @@ function renderIdioms() {
 
     IDIOM_DATA.forEach(idiom => {
         const isFavorite = currentFavorites.includes(idiom.id);
-        const isCompleted = idiom.id === 1; // Заглушка: идиома 1 изучена
+        const isCompleted = idiom.id === 1; 
         
+        // В каталоге используем эмодзи для простоты
         const card = document.createElement('div');
         card.className = `idiom-card`;
         card.innerHTML = `
@@ -176,19 +177,17 @@ function renderIdioms() {
         
         card.addEventListener('click', (e) => {
             if (e.target.classList.contains('favorite-icon')) {
-                // Логика добавления/удаления в избранное
                 const id = parseInt(e.target.dataset.id);
                 if (currentFavorites.includes(id)) {
                     currentFavorites = currentFavorites.filter(i => i !== id);
                 } else {
                     currentFavorites.push(id);
                 }
-                renderIdioms(); // Перерисовать список
+                renderIdioms(); 
                 return;
             }
             
             const selectedIdiom = IDIOM_DATA.find(i => i.id === idiom.id);
-            // Используем только идиому 1 для детального рендеринга (поскольку только у нее есть полные данные)
             if (selectedIdiom && selectedIdiom.exercises) { 
                 renderDetailScreen(selectedIdiom);
             } else {
@@ -200,18 +199,50 @@ function renderIdioms() {
     });
 }
 
+function renderFavorites() {
+    const favoritesScreen = document.getElementById('favorites-list');
+    favoritesScreen.innerHTML = '';
+
+    const favoriteIdioms = IDIOM_DATA.filter(idiom => currentFavorites.includes(idiom.id));
+    
+    if (favoriteIdioms.length === 0) {
+         favoritesScreen.innerHTML = '<p class="empty-state">Ваш список избранного пуст. Нажмите на сердечко в каталоге, чтобы добавить идиому.</p>';
+         return;
+    }
+    
+    favoriteIdioms.forEach(idiom => {
+        // Повторный рендеринг карточки, можно использовать функцию renderIdioms, но без контейнера
+        const card = document.createElement('div');
+        card.className = `idiom-card`;
+        card.innerHTML = `
+            <div class="meme-icon">${idiom.meme || '📝'}</div>
+            <div class="idiom-info">
+                <span class="idiom-text">${idiom.text}</span>
+                <span class="literal-text">${idiom.literalTranslation || ''}</span>
+            </div>
+            <span class="favorite-icon" data-id="${idiom.id}">❤️</span>
+        `;
+        // ... (Добавьте обработчик клика для перехода на детальный экран)
+        favoritesScreen.appendChild(card);
+    });
+}
+
+
 // =================================================================
 // 5. РЕНДЕРИНГ ДЕТАЛЬНОГО ЭКРАНА И УПРАЖНЕНИЙ
 // =================================================================
 
-// Генератор HTML для одного блока упражнения
 function renderExerciseBlock(exercise) {
     let content = '';
     
-    if (exercise.type === "Выбор значения") {
+    if (exercise.type === "Выбор значения" || exercise.type === "Разговорный Тест") {
+        const inputName = exercise.id;
         content = exercise.options.map((option, i) => `
-            <label class="radio-options"><input type="radio" name="${exercise.id}">${option}</label>
+            <label class="radio-options"><input type="radio" name="${inputName}">${option}</label>
         `).join('');
+        if (exercise.type === "Разговорный Тест") {
+             content = `<p><strong>Диалог:</strong> ${exercise.dialogue_line}</p>` + content;
+        }
     } else if (exercise.type === "Вставка пропущенного слова") {
         content = `
             <p>${exercise.prompt_text_before || ''} 
@@ -231,13 +262,6 @@ function renderExerciseBlock(exercise) {
             <p><strong>Переведите:</strong> "${exercise.russian_phrase}"</p>
             <input type="text" placeholder="Введите ваш ответ на испанском" style="width: 100%; padding: 5px;">
         `;
-    } else if (exercise.type === "Разговорный Тест") {
-         content = `
-            <p><strong>Диалог:</strong> ${exercise.dialogue_line}</p>
-            ${exercise.options.map((option, i) => `
-                <label class="radio-options"><input type="radio" name="${exercise.id}_diag">${option}</label>
-            `).join('')}
-        `;
     }
     
     return `
@@ -256,16 +280,26 @@ function renderDetailScreen(idiom) {
     
     const exercisesHtml = idiom.exercises.map(renderExerciseBlock).join('');
 
+    // --- ЛОГИКА ОТОБРАЖЕНИЯ КАРТИНКИ ---
+    let memeContent;
+    if (idiom.meme_url) {
+        // Используем тег <img> с полной шириной контейнера
+        memeContent = `<img src="${idiom.meme_url}" alt="Кадр из фильма для идиомы ${idiom.text}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 0;">`;
+    } else {
+        // Используем запасной эмодзи
+        memeContent = `<p style="font-size: 4em;">${idiom.meme}</p>`;
+    }
+    
     detailScreen.innerHTML = `
         <div class="detail-header">
             <button onclick="showScreen('screen-dashboard')">⟨</button>
             <h2>${idiom.text}</h2>
-            <span class="favorite-icon">${isFavorite ? '❤️' : '🤍'}</span>
+            <span class="favorite-icon" onclick="toggleFavorite(${idiom.id})">${isFavorite ? '❤️' : '🤍'}</span>
         </div>
         
         <div class="detail-content">
             <div class="meme-image-container">
-                <p style="font-size: 4em;">${idiom.meme}</p>
+                ${memeContent}
             </div>
 
             <div class="idiom-title-block">
@@ -292,16 +326,25 @@ function renderDetailScreen(idiom) {
     showScreen('screen-detail');
 }
 
+// Глобальная функция для переключения избранного
+function toggleFavorite(id) {
+    if (currentFavorites.includes(id)) {
+        currentFavorites = currentFavorites.filter(i => i !== id);
+    } else {
+        currentFavorites.push(id);
+    }
+    // Если на детальном экране, обновить его
+    renderDetailScreen(IDIOM_DATA.find(i => i.id === id));
+}
+
 // =================================================================
 // 6. ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
 // =================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Рендеринг Главного Хаба при загрузке
     renderDashboard();
 
-    // 2. Обработчик навигации
     document.querySelectorAll('#bottom-nav button').forEach(button => {
         button.addEventListener('click', (e) => {
             const screenId = 'screen-' + e.currentTarget.getAttribute('data-screen');
@@ -309,6 +352,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Показать начальный экран (Хаб)
     showScreen('screen-dashboard');
 });
