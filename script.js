@@ -18,9 +18,9 @@ const IDIOM_DATA_SINGLE = {
     "meaning": "Быть очень легким, пустяковым делом, проще простого.",
     "example": "No te preocupes por el examen de matemáticas, ¡será pan comido!",
     "meme": "🍞", // Запасной эмодзи
-    "meme_url": "assets/images/ser_pan_comido.jpg", // <--- ССЫЛКА НА ВАШ КАДР ИЗ ФИЛЬМА
-    "audio_idiom_url": "assets/audio/ser_pan_comido.mp3", // Заглушка
-    "audio_example_url": "assets/audio/example_pan_comido.mp3", // Заглушка
+    "meme_url": "idioms-app/assets/images/ser_pan_comido.jpg", // <--- ССЫЛКА НА ВАШ КАДР ИЗ ФИЛЬМА
+    "audio_idiom_url": "idioms-app/assets/audio/ser_pan_comido.mp3", // Заглушка
+    "audio_example_url": "idioms-app/assets/audio/example_pan_comido.mp3", // Заглушка
     "topic": "Характер",
     "exercises": [
         {
