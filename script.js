@@ -18,7 +18,8 @@ const IDIOM_DATA_SINGLE = {
     "literalTranslation": "Быть съеденным хлебом",
     "meaning": "Быть очень легким, пустяковым делом, проще простого.",
     "example": "No te preocupes por el examen de matemáticas, ¡será pan comido!",
-    "meme_url": "/assets/images/ser_pan_comido.jpg",
+    "meme": "🍞", // Оставляем эмодзи как запасной вариант
+    "meme_url": "/assets/images/ser_pan_comido.jpg", // <--- ДОБАВЛЕНО! Ссылка на ваш файл
     "audio_idiom_url": "/assets/audio/ser_pan_comido.mp3", 
     "audio_example_url": "/assets/audio/example_pan_comido.mp3", 
     "topic": "Характер",
