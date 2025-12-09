@@ -258,12 +258,14 @@ h1, h2, h3 {
 }
 .meme-image-container {
     width: 100%;
-    height: 200px;
-    background-color: #f0f0f0;
+    height: 250px; /* Увеличим высоту для лучшего вида "кадра из фильма" */
+    background-color: #f0f0f0; 
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 -15px 15px -15px;
+    margin: 0 -15px 15px -15px; /* Захват полной ширины */
+    overflow: hidden; /* Важно, чтобы изображение не выходило за границы */
+    border-radius: 8px; /* Добавим легкое скругление */
 }
 .idiom-title-block {
     font-size: 1.8em;
