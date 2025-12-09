@@ -1,7 +1,6 @@
 // =================================================================
 // 1. ДАННЫЕ ПРИЛОЖЕНИЯ (IDIOM_DATA)
-//    КРИТИЧЕСКОЕ ИСПРАВЛЕНИЕ: Используется префикс репозитория 'idioms-app/' 
-//    и расширение .jpg для картинки.
+//    ВКЛЮЧАЕТ: Исправленные пути к медиафайлам и 5 новых упражнений.
 // =================================================================
 
 const OTHER_IDIOMS = [
@@ -19,57 +18,66 @@ const IDIOM_DATA_SINGLE = {
     "example": "No te preocupes por el examen de matemáticas, ¡será pan comido!",
     "meme": "🍞",
     
-    // ИСПРАВЛЕННЫЕ ПУТИ К МЕДИАФАЙЛАМ
+    // ПУТИ: Префикс 'idioms-app/' и расширение '.jpg'
     "meme_url": "idioms-app/assets/images/ser_pan_comido.jpg", 
     "audio_idiom_url": "idioms-app/assets/audio/ser_pan_comido.mp3", 
     "audio_example_url": "idioms-app/assets/audio/example_pan_comido.mp3", 
     
     "topic": "Характер",
     "exercises": [
+        // 1. Базовое: Выбор значения
         {
             "id": "ex1_base_choice",
             "type": "Выбор значения",
             "question": "Что означает идиома 'Ser pan comido'?",
-            "options": ["Быть очень вкусным", "Быть очень легким, пустяковым делом", "Быть очень сложным делом"],
-            "answer": "Быть очень легким, пустяковым делом"
+            "options": ["Быть очень вкусным", "Быть очень легким", "Быть очень тяжелым", "Быть очень быстрым"],
+            "answer": "Быть очень легким" // Корректный ответ из списка пользователя
         },
+        // 2. Базовое: Вставка пропущенного слова
         {
             "id": "ex2_base_gap",
             "type": "Вставка пропущенного слова",
-            "question": "Закончите идиому: El trabajo no es complicado, es pan ______.",
+            "question": "Вставьте пропущенное слово, чтобы закончить идиому: El trabajo no es complicado, es pan ______.",
             "prompt_text_before": "El trabajo no es complicado, es pan",
             "input_placeholder": "______",
             "prompt_text_after": ".",
             "answer": "comido"
         },
+        // 3. Базовое: Сопоставление пар
         {
             "id": "ex3_base_match",
             "type": "Сопоставление пар",
             "question": "Сопоставьте испанские фразы с их русскими значениями:",
             "pairs": [
-                {"item1": "Pan comido", "item2": "Раз плюнуть"},
-                {"item1": "Es fácil", "item2": "Это легко"},
-                {"item1": "Tarea difícil", "item2": "Сложная задача"}
+                {"item1": "Pan comido", "item2": "Это раз плюнуть"},
+                {"item1": "Tarea difícil", "item2": "Сложная задача"},
+                {"item1": "Es fácil", "item2": "Это легко"}
             ]
+            // Проверка реализована как заглушка в checkAnswer
         },
+        // 4. Фишка: Синхронный Перевод
         {
             "id": "ex4_feature_translate",
             "type": "Синхронный Перевод",
             "question": "Используйте идиому 'Ser pan comido' для перевода фразы на испанский (наберите ответ):",
             "russian_phrase": "Не волнуйся, этот тест будет раз плюнуть для тебя!",
-            "answer": "No te preocupes, este test será pan comido para ti"
+            // Ответ с 'examen'
+            "answer": "No te preocupes, este examen será pan comido para ti" 
         },
+        // 5. Фишка: Разговорный Тест
         {
             "id": "ex5_feature_dialogue",
             "type": "Разговорный Тест",
             "question": "Выберите наиболее логичный ответ в диалоге:",
-            "dialogue_line": "— ¿Crees que aprobar el examen de conducir será muy difícil?",
+            "dialogue_line": "— ¿Crees que aprobar el curso de natación será muy difícil?",
             "options": [
-                "A. Sí, es muy difícil.",
-                "B. No, ¡será pan comido!",
-                "C. Debes comer más pan."
+                "No, será pan comido.", 
+                "Sí, es muy difícil.", 
+                "Debes comer más pan.", 
+                "Está lloviendo mucho."
             ],
-            "answer": "B. No, ¡será pan comido!"
+            // Правильный ответ: A. No, será pan comido.
+            "answer": "No, será pan comido."
         }
     ]
 };
@@ -215,7 +223,6 @@ function toggleFavorite(id) {
 // 5. РЕНДЕРИНГ ДЕТАЛЬНОГО ЭКРАНА И УПРАЖНЕНИЙ
 // =================================================================
 
-// Обновленная функция рендеринга упражнений (принимает idiom и exercise)
 function renderExerciseBlock(idiom, exercise) { 
     let content = '';
     
@@ -262,7 +269,7 @@ function renderDetailScreen(idiom) {
     const detailScreen = document.getElementById('screen-detail');
     const isFavorite = currentFavorites.includes(idiom.id);
     
-    // ОБНОВЛЕНО: Передача объекта idiom в renderExerciseBlock
+    // Передача объекта idiom в renderExerciseBlock
     const exercisesHtml = idiom.exercises.map(ex => renderExerciseBlock(idiom, ex)).join('');
 
     let memeContent = idiom.meme_url ? 
@@ -359,8 +366,13 @@ function checkAnswer(idiomId, exerciseId) {
     // 1. Извлечение ответа пользователя
     if (exercise.type === "Выбор значения" || exercise.type === "Разговорный Тест") {
         const checkedRadio = exerciseBlock.querySelector(`input[name="${exerciseId}"]:checked`);
-        // Извлекаем текст из родительского элемента (label)
+        // Извлекаем текст из родительского элемента (label), убирая пробелы и потенциальные префиксы типа "A."
         userAnswer = checkedRadio ? checkedRadio.parentElement.textContent.trim() : '';
+        // Для разговорного теста уберем префикс типа "A." перед проверкой
+        if (exercise.type === "Разговорный Тест" && userAnswer.match(/^[A-Z]\.\s/)) {
+            userAnswer = userAnswer.substring(3).trim();
+        }
+
         isCorrect = (userAnswer === exercise.answer);
 
     } else if (exercise.type === "Вставка пропущенного слова" || exercise.type === "Синхронный Перевод") {
@@ -370,8 +382,10 @@ function checkAnswer(idiomId, exerciseId) {
         isCorrect = (userAnswer.toLowerCase() === exercise.answer.toLowerCase());
         
     } else if (exercise.type === "Сопоставление пар") {
-        // Заглушка, пока не реализована полная логика drag-and-drop
-        resultDiv.innerHTML = `<p class="result-info">🛠️ Для сопоставления нужна интерактивная логика.</p>`;
+        // Заглушка, пока не реализована полная логика
+        resultDiv.innerHTML = `<p class="result-info">🛠️ Для сопоставления нужна интерактивная логика. (Ответ: ${exercise.pairs.map(p => `${p.item1} ↔ ${p.item2}`).join(', ')})</p>`;
+        // Деактивируем кнопку, но не помечаем как "правильный"
+        exerciseBlock.querySelector('button').disabled = true;
         return;
     }
     
