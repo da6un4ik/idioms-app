@@ -10,6 +10,15 @@ const OTHER_IDIOMS = [
     { id: 5, text: "Ahogarse en un vaso de agua", meme: "💧", topic: "Эмоции", literalTranslation: "Утонуть в стакане воды" },
 ];
 
+// Функция-помощник для перемешивания слов
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
 const IDIOM_DATA_SINGLE = {
     "id": 1,
     "text": "Ser pan comido",
@@ -19,9 +28,9 @@ const IDIOM_DATA_SINGLE = {
     "meme": "🍞",
     
     // ПУТИ: Префикс 'idioms-app/' и расширение '.jpg'
-    "meme_url": "assets/images/ser_pan_comido.jpg", 
-    "audio_idiom_url": "assets/audio/ser_pan_comido.mp3", 
-    "audio_example_url": "assets/audio/example_pan_comido.mp3", 
+    "meme_url": "idioms-app/assets/images/ser_pan_comido.jpg", 
+    "audio_idiom_url": "idioms-app/assets/audio/ser_pan_comido.mp3", 
+    "audio_example_url": "idioms-app/assets/audio/example_pan_comido.mp3", 
     
     "topic": "Характер",
     "exercises": [
@@ -31,7 +40,7 @@ const IDIOM_DATA_SINGLE = {
             "type": "Выбор значения",
             "question": "Что означает идиома 'Ser pan comido'?",
             "options": ["Быть очень вкусным", "Быть очень легким", "Быть очень тяжелым", "Быть очень быстрым"],
-            "answer": "Быть очень легким" // Корректный ответ из списка пользователя
+            "answer": "Быть очень легким"
         },
         // 2. Базовое: Вставка пропущенного слова
         {
@@ -43,7 +52,7 @@ const IDIOM_DATA_SINGLE = {
             "prompt_text_after": ".",
             "answer": "comido"
         },
-        // 3. Базовое: Сопоставление пар
+        // 3. Базовое: Сопоставление пар (ФУНКЦИОНАЛ ДОРАБОТАН)
         {
             "id": "ex3_base_match",
             "type": "Сопоставление пар",
@@ -53,16 +62,19 @@ const IDIOM_DATA_SINGLE = {
                 {"item1": "Tarea difícil", "item2": "Сложная задача"},
                 {"item1": "Es fácil", "item2": "Это легко"}
             ]
-            // Проверка реализована как заглушка в checkAnswer
         },
-        // 4. Фишка: Синхронный Перевод
+        // 4. Фишка: Синхронный Перевод (ТЕПЕРЬ КОНСТРУКТОР)
         {
             "id": "ex4_feature_translate",
             "type": "Синхронный Перевод",
-            "question": "Используйте идиому 'Ser pan comido' для перевода фразы на испанский (наберите ответ):",
+            "question": "Соберите фразу, используя 'кубики' слов:",
             "russian_phrase": "Не волнуйся, этот тест будет раз плюнуть для тебя!",
-            // Ответ с 'examen'
-            "answer": "No te preocupes, este examen será pan comido para ti" 
+            // Ответ для проверки
+            "answer": "No te preocupes este examen será pan comido para ti",
+            // Слова для конструктора (необходимо для рендеринга)
+            "words": [
+                "No", "te", "preocupes", "este", "examen", "será", "pan", "comido", "para", "ti"
+            ]
         },
         // 5. Фишка: Разговорный Тест
         {
@@ -76,7 +88,6 @@ const IDIOM_DATA_SINGLE = {
                 "Debes comer más pan.", 
                 "Está lloviendo mucho."
             ],
-            // Правильный ответ: A. No, será pan comido.
             "answer": "No, será pan comido."
         }
     ]
@@ -87,7 +98,7 @@ let currentFavorites = [1];
 let userName = "Ученик"; 
 
 // =================================================================
-// 2. ФУНКЦИИ УПРАВЛЕНИЯ ЭКРАНАМИ И НАВИГАЦИЕЙ
+// 2. ФУНКЦИИ УПРАВЛЕНИЯ ЭКРАНАМИ И НАВИГАЦИЕЙ (БЕЗ ИЗМЕНЕНИЙ)
 // =================================================================
 
 function showScreen(screenId) {
@@ -109,9 +120,7 @@ function showScreen(screenId) {
     if (screenId === 'screen-favorites') renderFavorites();
 }
 
-// =================================================================
-// 3. РЕНДЕРИНГ ГЛАВНОГО ХАБА (DASHBOARD)
-// =================================================================
+// ... (Остальные функции renderDashboard, renderIdioms, toggleFavorite без изменений)
 
 function renderDashboard() {
     const dashboardScreen = document.getElementById('screen-dashboard');
@@ -157,10 +166,6 @@ function renderDashboard() {
         </div>
     `;
 }
-
-// =================================================================
-// 4. РЕНДЕРИНГ СПИСКА ИДИОМ (КАТАЛОГ и Избранное)
-// =================================================================
 
 function renderIdioms() {
     const listContainer = document.getElementById('idiom-list');
@@ -226,7 +231,7 @@ function toggleFavorite(id) {
 function renderExerciseBlock(idiom, exercise) { 
     let content = '';
     
-    // Логика для Radio Buttons и Checkboxes
+    // Логика для Radio Buttons (Выбор значения / Разговорный Тест)
     if (exercise.type === "Выбор значения" || exercise.type === "Разговорный Тест") {
         content = exercise.options.map((option, i) => `
             <label class="radio-options"><input type="radio" name="${exercise.id}">${option}</label>
@@ -235,23 +240,59 @@ function renderExerciseBlock(idiom, exercise) {
              content = `<p><strong>Диалог:</strong> ${exercise.dialogue_line}</p>` + content;
         }
     } 
-    // Логика для Ввода текста
-    else if (exercise.type === "Вставка пропущенного слова" || exercise.type === "Синхронный Перевод") {
-         content = (exercise.type === "Вставка пропущенного слова") ?
-            `<p>${exercise.prompt_text_before || ''} 
+    // Логика для Вставки пропущенного слова
+    else if (exercise.type === "Вставка пропущенного слова") {
+         content = `<p>${exercise.prompt_text_before || ''} 
                 <input type="text" placeholder="${exercise.input_placeholder || 'слово'}" style="width: 70px;"> 
                 ${exercise.prompt_text_after || ''}
-            </p>` :
-            `<p><strong>Переведите:</strong> "${exercise.russian_phrase}"</p>
-             <input type="text" placeholder="Введите ваш ответ на испанском" style="width: 100%; padding: 5px;">`;
-    } 
-    // Логика для Сопоставления
-    else if (exercise.type === "Сопоставление пар") {
-        content = `
-            <div class="matching-list">
-                ${exercise.pairs.map(p => `<span>${p.item1}</span><span>${p.item2}</span>`).join('')}
+            </p>`;
+    }
+    // Логика для Синхронного Перевода (КОНСТРУКТОР)
+    else if (exercise.type === "Синхронный Перевод") {
+        const shuffledWords = shuffleArray([...exercise.words]); // Копируем и перемешиваем
+         content = `
+            <p><strong>Переведите:</strong> "${exercise.russian_phrase}"</p>
+            <div class="word-constructor">
+                <div class="sentence-area" id="constructor-result-${exercise.id}" 
+                     ondblclick="clearConstructor('${exercise.id}')">
+                </div>
+                <div class="word-bank">
+                    ${shuffledWords.map((word, index) => 
+                        `<button class="word-chip" data-word="${word}" data-index="${index}" 
+                                 onclick="selectWord(this, '${exercise.id}')">${word}</button>`
+                    ).join('')}
+                </div>
+                <div class="constructor-actions">
+                    <button class="action-btn" onclick="clearConstructor('${exercise.id}')">Очистить</button>
+                    <button class="action-btn" onclick="resetConstructor('${exercise.id}')">Сбросить</button>
+                </div>
             </div>
-            <small>Нажмите на пары для сопоставления.</small>
+        `;
+    } 
+    // Логика для Сопоставления пар
+    else if (exercise.type === "Сопоставление пар") {
+        // Мы перемешиваем пары для Column A и Column B, чтобы они не совпадали по порядку
+        const columnA = exercise.pairs.map(p => ({ text: p.item1, group: 'A', match: p.item2 }));
+        const columnB = exercise.pairs.map(p => ({ text: p.item2, group: 'B', match: p.item1 }));
+        
+        const shuffledA = shuffleArray(columnA);
+        const shuffledB = shuffleArray(columnB);
+
+        content = `
+            <div class="matching-grid">
+                <div class="matching-column" id="col-A-${exercise.id}">
+                    ${shuffledA.map((item, index) => 
+                        `<div class="match-item" data-group="A" data-match="${item.match}" data-index="${index}" 
+                            onclick="toggleMatchingPair(this, '${idiom.id}', '${exercise.id}')">${item.text}</div>`
+                    ).join('')}
+                </div>
+                <div class="matching-column" id="col-B-${exercise.id}">
+                    ${shuffledB.map((item, index) => 
+                        `<div class="match-item" data-group="B" data-match="${item.match}" data-index="${index}" 
+                            onclick="toggleMatchingPair(this, '${idiom.id}', '${exercise.id}')">${item.text}</div>`
+                    ).join('')}
+                </div>
+            </div>
         `;
     }
     
@@ -260,7 +301,8 @@ function renderExerciseBlock(idiom, exercise) {
             <h4>${exercise.type}</h4>
             <p>${exercise.question}</p>
             ${content}
-            <div class="result-feedback"></div> <button onclick="checkAnswer(${idiom.id}, '${exercise.id}')">Проверить</button>
+            <div class="result-feedback"></div> 
+            <button onclick="checkAnswer(${idiom.id}, '${exercise.id}')">Проверить</button>
         </div>
     `;
 }
@@ -269,7 +311,6 @@ function renderDetailScreen(idiom) {
     const detailScreen = document.getElementById('screen-detail');
     const isFavorite = currentFavorites.includes(idiom.id);
     
-    // Передача объекта idiom в renderExerciseBlock
     const exercisesHtml = idiom.exercises.map(ex => renderExerciseBlock(idiom, ex)).join('');
 
     let memeContent = idiom.meme_url ? 
@@ -318,7 +359,197 @@ function renderDetailScreen(idiom) {
 }
 
 // =================================================================
-// 6. ФУНКЦИЯ ВОСПРОИЗВЕДЕНИЯ АУДИО 
+// 6. ФУНКЦИИ ИНТЕРАКТИВА (КОНСТРУКТОР СЛОВ)
+// =================================================================
+
+function selectWord(chip, exerciseId) {
+    const sentenceArea = document.getElementById(`constructor-result-${exerciseId}`);
+    
+    if (chip.parentElement.classList.contains('word-bank')) {
+        // Перемещаем чип из банка в область предложения
+        sentenceArea.appendChild(chip);
+        chip.classList.add('selected');
+        chip.onclick = () => sentenceArea.removeChild(chip); // Обратный клик для удаления
+    } else {
+         // Удаляем чип из области предложения
+        sentenceArea.removeChild(chip);
+    }
+}
+
+function clearConstructor(exerciseId) {
+    const sentenceArea = document.getElementById(`constructor-result-${exerciseId}`);
+    sentenceArea.innerHTML = '';
+}
+
+function resetConstructor(exerciseId) {
+    const exerciseBlock = document.querySelector(`.exercise-block[data-exercise-id="${exerciseId}"]`);
+    const wordBank = exerciseBlock.querySelector('.word-bank');
+    const sentenceArea = document.getElementById(`constructor-result-${exerciseId}`);
+
+    // Перемещаем все чипы обратно в банк и сбрасываем их состояние
+    sentenceArea.innerHTML = '';
+    
+    // Находим чипы, которые изначально были в банке
+    const chips = exerciseBlock.querySelectorAll('.word-chip');
+    chips.forEach(chip => {
+        chip.classList.remove('selected');
+        chip.onclick = () => selectWord(chip, exerciseId);
+        wordBank.appendChild(chip);
+    });
+}
+
+
+// =================================================================
+// 7. ФУНКЦИИ ИНТЕРАКТИВА (СОПОСТАВЛЕНИЕ)
+// =================================================================
+
+// Хранилище для выбранных элементов
+let selectedMatch = null; 
+
+function toggleMatchingPair(clickedItem, idiomId, exerciseId) {
+    // Если упражнение уже проверено и заблокировано, ничего не делаем
+    const exerciseBlock = document.querySelector(`.exercise-block[data-exercise-id="${exerciseId}"]`);
+    if (exerciseBlock.querySelector('button').disabled) return;
+
+    if (clickedItem.classList.contains('matched')) return;
+
+    if (selectedMatch === null) {
+        // Шаг 1: Выбор первого элемента
+        clickedItem.classList.add('selected');
+        selectedMatch = clickedItem;
+    } else if (selectedMatch === clickedItem) {
+        // Шаг 2: Отмена выбора
+        clickedItem.classList.remove('selected');
+        selectedMatch = null;
+    } else if (selectedMatch.dataset.group !== clickedItem.dataset.group) {
+        // Шаг 3: Выбор второго элемента (из другой колонки)
+        
+        // Проверка совпадения
+        const isMatchAtoB = selectedMatch.dataset.match === clickedItem.textContent;
+        const isMatchBtoA = clickedItem.dataset.match === selectedMatch.textContent;
+        
+        if (isMatchAtoB || isMatchBtoA) {
+            // Верно! Фиксируем пару.
+            selectedMatch.classList.add('matched');
+            clickedItem.classList.add('matched');
+            
+            // Проверка, все ли пары найдены
+            const allItems = exerciseBlock.querySelectorAll('.match-item');
+            const allMatched = allItems.length === exerciseBlock.querySelectorAll('.matched').length;
+            
+            if (allMatched) {
+                // Если все сопоставлено, автоматически проверяем и блокируем
+                checkAnswer(idiomId, exerciseId); 
+            }
+            
+        } else {
+            // Неверно. Визуальный фидбек и сброс выбора.
+            selectedMatch.classList.add('mismatch');
+            clickedItem.classList.add('mismatch');
+            
+            setTimeout(() => {
+                selectedMatch.classList.remove('selected', 'mismatch');
+                clickedItem.classList.remove('selected', 'mismatch');
+            }, 500);
+        }
+        
+        // Сброс временного хранилища
+        selectedMatch.classList.remove('selected');
+        selectedMatch = null;
+    } else {
+        // Выбран элемент из той же колонки - сбрасываем старый и выбираем новый
+        selectedMatch.classList.remove('selected');
+        clickedItem.classList.add('selected');
+        selectedMatch = clickedItem;
+    }
+}
+
+
+// =================================================================
+// 8. ФУНКЦИЯ ПРОВЕРКИ ОТВЕТОВ (Обновлена для конструктора и сопоставления)
+// =================================================================
+
+function getIdiomDataById(id) {
+    return IDIOM_DATA.find(i => i.id === id);
+}
+
+function checkAnswer(idiomId, exerciseId) {
+    const idiom = getIdiomDataById(idiomId);
+    if (!idiom) return;
+
+    const exercise = idiom.exercises.find(e => e.id === exerciseId);
+    if (!exercise) return;
+
+    const exerciseBlock = document.querySelector(`.exercise-block[data-exercise-id="${exerciseId}"]`);
+    const resultDiv = exerciseBlock.querySelector('.result-feedback');
+    let userAnswer = '';
+    let isCorrect = false;
+    let feedbackText = '';
+
+    // Сброс классов
+    exerciseBlock.classList.remove('correct-answer', 'incorrect-answer');
+
+    // 1. ИЗВЛЕЧЕНИЕ ОТВЕТА И ПРОВЕРКА
+    if (exercise.type === "Выбор значения" || exercise.type === "Разговорный Тест") {
+        const checkedRadio = exerciseBlock.querySelector(`input[name="${exerciseId}"]:checked`);
+        userAnswer = checkedRadio ? checkedRadio.parentElement.textContent.trim() : '';
+        if (exercise.type === "Разговорный Тест" && userAnswer.match(/^[A-Z]\.\s/)) {
+            userAnswer = userAnswer.substring(3).trim();
+        }
+        isCorrect = (userAnswer === exercise.answer);
+
+    } else if (exercise.type === "Вставка пропущенного слова") {
+        const inputField = exerciseBlock.querySelector('input[type="text"]');
+        userAnswer = inputField ? inputField.value.trim() : '';
+        isCorrect = (userAnswer.toLowerCase() === exercise.answer.toLowerCase());
+        
+    } else if (exercise.type === "Синхронный Перевод") {
+        // Логика для Конструктора слов
+        const sentenceArea = document.getElementById(`constructor-result-${exerciseId}`);
+        // Собираем слова из чипов в предложении
+        userAnswer = Array.from(sentenceArea.querySelectorAll('.word-chip'))
+            .map(chip => chip.dataset.word)
+            .join(' ')
+            .trim();
+        
+        // Убираем лишние знаки препинания и пробелы для более точной проверки
+        const cleanAnswer = exercise.answer.toLowerCase().replace(/[.,!?:;]/g, '').trim();
+        const cleanUserAnswer = userAnswer.toLowerCase().replace(/[.,!?:;]/g, '').trim();
+
+        isCorrect = (cleanUserAnswer === cleanAnswer);
+        
+        if (!isCorrect) {
+             feedbackText = `<br><small>Ваш ответ: **${userAnswer}**</small>`;
+        }
+        
+    } else if (exercise.type === "Сопоставление пар") {
+        // Логика для Сопоставления пар
+        const allItems = exerciseBlock.querySelectorAll('.match-item');
+        const numMatched = exerciseBlock.querySelectorAll('.matched').length;
+        
+        isCorrect = (numMatched === allItems.length);
+        
+        if (!isCorrect) {
+            feedbackText = `<br><small>Вы сопоставили ${numMatched} из ${allItems.length / 2} пар.</small>`;
+        }
+    }
+    
+    // 2. ОТОБРАЖЕНИЕ РЕЗУЛЬТАТА
+    if (isCorrect) {
+        resultDiv.innerHTML = `<span class="correct">✅ Верно!</span>`;
+        exerciseBlock.classList.add('correct-answer');
+    } else {
+        resultDiv.innerHTML = `<span class="incorrect">❌ Неверно.</span>${feedbackText}<br><small>Правильный ответ: **${exercise.answer}**</small>`;
+        exerciseBlock.classList.add('incorrect-answer');
+    }
+    
+    // Деактивируем кнопку после проверки
+    exerciseBlock.querySelector('button').disabled = true;
+}
+
+
+// =================================================================
+// 9. ФУНКЦИЯ ВОСПРОИЗВЕДЕНИЯ АУДИО (БЕЗ ИЗМЕНЕНИЙ)
 // =================================================================
 
 function playAudio(type) {
@@ -340,71 +571,9 @@ function playAudio(type) {
     }
 }
 
-// =================================================================
-// 7. ФУНКЦИЯ ПРОВЕРКИ ОТВЕТОВ
-// =================================================================
-
-function getIdiomDataById(id) {
-    return IDIOM_DATA.find(i => i.id === id);
-}
-
-function checkAnswer(idiomId, exerciseId) {
-    const idiom = getIdiomDataById(idiomId);
-    if (!idiom) return;
-
-    const exercise = idiom.exercises.find(e => e.id === exerciseId);
-    if (!exercise) return;
-
-    const exerciseBlock = document.querySelector(`.exercise-block[data-exercise-id="${exerciseId}"]`);
-    const resultDiv = exerciseBlock.querySelector('.result-feedback');
-    let userAnswer = '';
-    let isCorrect = false;
-
-    // Сброс классов
-    exerciseBlock.classList.remove('correct-answer', 'incorrect-answer');
-
-    // 1. Извлечение ответа пользователя
-    if (exercise.type === "Выбор значения" || exercise.type === "Разговорный Тест") {
-        const checkedRadio = exerciseBlock.querySelector(`input[name="${exerciseId}"]:checked`);
-        // Извлекаем текст из родительского элемента (label), убирая пробелы и потенциальные префиксы типа "A."
-        userAnswer = checkedRadio ? checkedRadio.parentElement.textContent.trim() : '';
-        // Для разговорного теста уберем префикс типа "A." перед проверкой
-        if (exercise.type === "Разговорный Тест" && userAnswer.match(/^[A-Z]\.\s/)) {
-            userAnswer = userAnswer.substring(3).trim();
-        }
-
-        isCorrect = (userAnswer === exercise.answer);
-
-    } else if (exercise.type === "Вставка пропущенного слова" || exercise.type === "Синхронный Перевод") {
-        const inputField = exerciseBlock.querySelector('input[type="text"]');
-        userAnswer = inputField ? inputField.value.trim() : '';
-        // Проверка без учета регистра для гибкости
-        isCorrect = (userAnswer.toLowerCase() === exercise.answer.toLowerCase());
-        
-    } else if (exercise.type === "Сопоставление пар") {
-        // Заглушка, пока не реализована полная логика
-        resultDiv.innerHTML = `<p class="result-info">🛠️ Для сопоставления нужна интерактивная логика. (Ответ: ${exercise.pairs.map(p => `${p.item1} ↔ ${p.item2}`).join(', ')})</p>`;
-        // Деактивируем кнопку, но не помечаем как "правильный"
-        exerciseBlock.querySelector('button').disabled = true;
-        return;
-    }
-    
-    // 2. Отображение результата
-    if (isCorrect) {
-        resultDiv.innerHTML = `<span class="correct">✅ Верно!</span>`;
-        exerciseBlock.classList.add('correct-answer');
-    } else {
-        resultDiv.innerHTML = `<span class="incorrect">❌ Неверно.</span><br><small>Правильный ответ: **${exercise.answer}**</small>`;
-        exerciseBlock.classList.add('incorrect-answer');
-    }
-    
-    // Деактивируем кнопку после проверки
-    exerciseBlock.querySelector('button').disabled = true;
-}
-
 
 // =================================================================
-// 8. ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
+// 10. ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
 // =================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
