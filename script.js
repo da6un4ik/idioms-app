@@ -1,46 +1,85 @@
-// --- ДАННЫЕ (для прототипа) ---
-const IDIOM_DATA = [
-    { 
-        id: 1, 
-        text: "Ser pan comido", 
-        literalTranslation: "Быть съеденным хлебом", 
-        meaning: "Очень легко, пустячное дело, проще простого.", 
-        example: "El examen fue muy pan comido. (Экзамен был очень легким)",
-        meme: "🍞 (Иллюстрация тут)", 
-        topic: "Еда",
-        exercises: [
-            { 
-                title: "Упражнение 1", 
-                subtitle: "Выберите значение:", 
-                question: "Что означает идиома 'Ser pan comido'?", 
-                type: "Выбор", 
-                options: ["Легкое дело", "Вкусный хлеб", "Сложная задача"] 
-            },
-            { 
-                title: "Упражнение 2", 
-                subtitle: "Вставьте пропущенное слово.", 
-                question: "La tarea fue muy _____.", 
-                type: "Пропуск" 
-            },
-            { 
-                title: "Упражнение 3", 
-                subtitle: "Сопоставьте простейшие пары:", 
-                question: "", 
-                type: "Сопоставление", 
-                pairs: ["Легко", "Просто", "Просто", "Sin esfuerzo"] 
-            },
-        ]
-    },
-    // Остальные идиомы для списка
-    { id: 2, text: "Estar en las nubes", meme: "☁️", topic: "Эмоции" },
-    { id: 3, text: "No tener pelos en la lengua", meme: "🗣️", topic: "Характер" },
-    { id: 4, text: "Poner los puntos sobre las íes", meme: "📝", topic: "Работа" },
-    { id: 5, text: "Ahogarse en un vaso de agua", meme: "💧", topic: "Эмоции" },
+// =================================================================
+// 1. ДАННЫЕ ПРИЛОЖЕНИЯ (IDIOM_DATA)
+//    В реальном приложении этот массив будет загружаться через AJAX/Fetch 
+//    или из JSON-файла, сгенерированного в Colab.
+// =================================================================
+
+// Заглушка для других идиом, чтобы заполнить каталог
+const OTHER_IDIOMS = [
+    { id: 2, text: "Estar en las nubes", meme: "☁️", topic: "Эмоции", literalTranslation: "Быть в облаках" },
+    { id: 3, text: "No tener pelos en la lengua", meme: "🗣️", topic: "Характер", literalTranslation: "Не иметь волос на языке" },
+    { id: 4, text: "Poner los puntos sobre las íes", meme: "📝", topic: "Работа", literalTranslation: "Расставить точки над 'i'" },
+    { id: 5, text: "Ahogarse en un vaso de agua", meme: "💧", topic: "Эмоции", literalTranslation: "Утонуть в стакане воды" },
 ];
 
-let currentFavorites = [1]; // Заглушка избранного
+const IDIOM_DATA_SINGLE = {
+    "id": 1,
+    "text": "Ser pan comido",
+    "literalTranslation": "Быть съеденным хлебом",
+    "meaning": "Быть очень легким, пустяковым делом, проще простого.",
+    "example": "No te preocupes por el examen de matemáticas, ¡será pan comido!",
+    "meme_url": "/assets/images/ser_pan_comido.jpg",
+    "audio_idiom_url": "/assets/audio/ser_pan_comido.mp3", 
+    "audio_example_url": "/assets/audio/example_pan_comido.mp3", 
+    "topic": "Характер",
+    "exercises": [
+        {
+            "id": "ex1_base_choice",
+            "type": "Выбор значения",
+            "question": "Что означает идиома 'Ser pan comido'?",
+            "options": ["Быть очень вкусным", "Быть очень легким, пустяковым делом", "Быть очень сложным делом"],
+            "answer": "Быть очень легким, пустяковым делом"
+        },
+        {
+            "id": "ex2_base_gap",
+            "type": "Вставка пропущенного слова",
+            "question": "Закончите идиому: El trabajo no es complicado, es pan ______.",
+            "prompt_text_before": "El trabajo no es complicado, es pan",
+            "input_placeholder": "______",
+            "prompt_text_after": ".",
+            "answer": "comido"
+        },
+        {
+            "id": "ex3_base_match",
+            "type": "Сопоставление пар",
+            "question": "Сопоставьте испанские фразы с их русскими значениями:",
+            "pairs": [
+                {"item1": "Pan comido", "item2": "Раз плюнуть"},
+                {"item1": "Es fácil", "item2": "Это легко"},
+                {"item1": "Tarea difícil", "item2": "Сложная задача"}
+            ]
+        },
+        {
+            "id": "ex4_feature_translate",
+            "type": "Синхронный Перевод",
+            "question": "Используйте идиому 'Ser pan comido' для перевода фразы на испанский (наберите ответ):",
+            "russian_phrase": "Не волнуйся, этот тест будет раз плюнуть для тебя!",
+            "answer": "No te preocupes, este test será pan comido para ti"
+        },
+        {
+            "id": "ex5_feature_dialogue",
+            "type": "Разговорный Тест",
+            "question": "Выберите наиболее логичный ответ в диалоге:",
+            "dialogue_line": "— ¿Crees que aprobar el examen de conducir será muy difícil?",
+            "options": [
+                "A. Sí, es muy difícil.",
+                "B. No, ¡será pan comido!",
+                "C. Debes comer más pan."
+            ],
+            "answer": "B. No, ¡será pan comido!"
+        }
+    ]
+};
 
-// --- ФУНКЦИИ УПРАВЛЕНИЯ ЭКРАНАМИ ---
+// Объединяем для каталога
+const IDIOM_DATA = [IDIOM_DATA_SINGLE, ...OTHER_IDIOMS];
+
+let currentFavorites = [1]; 
+let userName = "Ученик"; // Заглушка для имени
+
+// =================================================================
+// 2. ФУНКЦИИ УПРАВЛЕНИЯ ЭКРАНАМИ И НАВИГАЦИЕЙ
+// =================================================================
 
 function showScreen(screenId) {
     document.querySelectorAll('.screen').forEach(screen => {
@@ -55,56 +94,170 @@ function showScreen(screenId) {
             button.classList.add('active');
         }
     });
-    
-    // Скрытие основного заголовка на детальном экране
+
+    // Управление видимостью главного заголовка
     document.getElementById('main-header').style.display = (screenId === 'screen-detail') ? 'none' : 'block';
+
+    // Рендеринг контента при переходе
+    if (screenId === 'screen-catalog') renderIdioms();
+    if (screenId === 'screen-favorites') renderFavorites();
+    // if (screenId === 'screen-dashboard') renderDashboard(); // Рендерится при загрузке
 }
 
-// --- ФУНКЦИЯ РЕНДЕРИНГА УПРАЖНЕНИЙ ---
-function renderExerciseBlock(exercise) {
-    let content = '';
+// =================================================================
+// 3. РЕНДЕРИНГ ГЛАВНОГО ХАБА (DASHBOARD)
+// =================================================================
 
-    if (exercise.type === "Выбор") {
-        content = exercise.options.map((option, i) => `
-            <label class="radio-options"><input type="radio" name="ex1">${option}</label>
-        `).join('');
-    } else if (exercise.type === "Пропуск") {
-        content = `
-            <p>${exercise.question.split('_')[0]} <input type="text" placeholder="пропущенное слово" style="width: 70px;"> ${exercise.question.split('_')[1] || ''}</p>
-        `;
-    } else if (exercise.type === "Сопоставление") {
-        content = `
-            <div class="matching-list">
-                <span>Легко</span><span>Просто</span>
-                <span>Просто</span><span>Sin esfuerzo</span>
-                <span>Быстро</span><span>Rápido</span>
+function renderDashboard() {
+    const dashboardScreen = document.getElementById('screen-dashboard');
+    const isNewUser = false; // Логика проверки первого входа
+    const mainActionText = isNewUser ? "🚀 Начать обучение" : "📚 Продолжить обучение";
+    
+    dashboardScreen.innerHTML = `
+        <div class="dashboard-greeting">
+            <h1>Привет, ${userName}!</h1>
+        </div>
+
+        <div class="dashboard-cta">
+            <button class="cta-main-button" onclick="alert('Переход к следующей идиоме для изучения (Логика SRS)!')">
+                ${mainActionText}
+            </button>
+        </div>
+
+        <div class="dashboard-block idiom-of-day" onclick="renderDetailScreen(IDIOM_DATA[0])">
+            <div class="block-title">✨ Идиома Дня</div>
+            <div class="block-content">
+                <span class="meme-icon">${IDIOM_DATA_SINGLE.meme}</span>
+                <span class="idiom-text-day">${IDIOM_DATA_SINGLE.text}</span>
+                <span class="audio-icon">🔊</span>
             </div>
-        `;
-    }
+            <p class="meaning-text">${IDIOM_DATA_SINGLE.meaning.substring(0, 40)}...</p>
+        </div>
 
-    return `
-        <div class="exercise-block">
-            <h4>${exercise.title}</h4>
-            <p>${exercise.subtitle}</p>
-            ${content}
-            <button>Проверить</button>
+        <div class="dashboard-actions">
+            <div class="dashboard-block action-block" onclick="alert('Запуск режима повторения слабых идиом.')">
+                <div class="block-icon">🔄</div>
+                <div class="block-title">Повторение</div>
+                <p>Закрепить сложные моменты</p>
+            </div>
+            <div class="dashboard-block action-block" onclick="alert('Переход к продвинутым тестам (Синхронный перевод).')">
+                <div class="block-icon">🧠</div>
+                <div class="block-title">Практика</div>
+                <p>Продвинутые тесты и диалоги</p>
+            </div>
         </div>
     `;
 }
 
+// =================================================================
+// 4. РЕНДЕРИНГ СПИСКА ИДИОМ (КАТАЛОГ)
+// =================================================================
 
-// --- ФУНКЦИЯ: РЕНДЕРИНГ ДЕТАЛЬНОГО ЭКРАНА (ПОЛНЫЙ МАКЕТ) ---
+function renderIdioms() {
+    const listContainer = document.getElementById('idiom-list');
+    listContainer.innerHTML = '';
+
+    IDIOM_DATA.forEach(idiom => {
+        const isFavorite = currentFavorites.includes(idiom.id);
+        const isCompleted = idiom.id === 1; // Заглушка: идиома 1 изучена
+        
+        const card = document.createElement('div');
+        card.className = `idiom-card`;
+        card.innerHTML = `
+            <div class="meme-icon">${idiom.meme || '📝'}</div>
+            <div class="idiom-info">
+                <span class="idiom-text">${idiom.text}</span>
+                <span class="literal-text">${idiom.literalTranslation || ''}</span>
+            </div>
+            <span class="progress-icon">${isCompleted ? '✅' : ''}</span>
+            <span class="favorite-icon" data-id="${idiom.id}">${isFavorite ? '❤️' : '🤍'}</span>
+        `;
+        
+        card.addEventListener('click', (e) => {
+            if (e.target.classList.contains('favorite-icon')) {
+                // Логика добавления/удаления в избранное
+                const id = parseInt(e.target.dataset.id);
+                if (currentFavorites.includes(id)) {
+                    currentFavorites = currentFavorites.filter(i => i !== id);
+                } else {
+                    currentFavorites.push(id);
+                }
+                renderIdioms(); // Перерисовать список
+                return;
+            }
+            
+            const selectedIdiom = IDIOM_DATA.find(i => i.id === idiom.id);
+            // Используем только идиому 1 для детального рендеринга (поскольку только у нее есть полные данные)
+            if (selectedIdiom && selectedIdiom.exercises) { 
+                renderDetailScreen(selectedIdiom);
+            } else {
+                alert(`Нет полных данных для детального экрана идиомы: ${idiom.text}`);
+            }
+        });
+        
+        listContainer.appendChild(card);
+    });
+}
+
+// =================================================================
+// 5. РЕНДЕРИНГ ДЕТАЛЬНОГО ЭКРАНА И УПРАЖНЕНИЙ
+// =================================================================
+
+// Генератор HTML для одного блока упражнения
+function renderExerciseBlock(exercise) {
+    let content = '';
+    
+    if (exercise.type === "Выбор значения") {
+        content = exercise.options.map((option, i) => `
+            <label class="radio-options"><input type="radio" name="${exercise.id}">${option}</label>
+        `).join('');
+    } else if (exercise.type === "Вставка пропущенного слова") {
+        content = `
+            <p>${exercise.prompt_text_before || ''} 
+                <input type="text" placeholder="${exercise.input_placeholder || 'слово'}" style="width: 70px;"> 
+                ${exercise.prompt_text_after || ''}
+            </p>
+        `;
+    } else if (exercise.type === "Сопоставление пар") {
+        content = `
+            <div class="matching-list">
+                ${exercise.pairs.map(p => `<span>${p.item1}</span><span>${p.item2}</span>`).join('')}
+            </div>
+            <small>Нажмите на пары для сопоставления.</small>
+        `;
+    } else if (exercise.type === "Синхронный Перевод") {
+         content = `
+            <p><strong>Переведите:</strong> "${exercise.russian_phrase}"</p>
+            <input type="text" placeholder="Введите ваш ответ на испанском" style="width: 100%; padding: 5px;">
+        `;
+    } else if (exercise.type === "Разговорный Тест") {
+         content = `
+            <p><strong>Диалог:</strong> ${exercise.dialogue_line}</p>
+            ${exercise.options.map((option, i) => `
+                <label class="radio-options"><input type="radio" name="${exercise.id}_diag">${option}</label>
+            `).join('')}
+        `;
+    }
+    
+    return `
+        <div class="exercise-block">
+            <h4>${exercise.type}</h4>
+            <p>${exercise.question}</p>
+            ${content}
+            <button onclick="alert('Проверка ответа для ${exercise.type}!\nПравильный ответ: ${exercise.answer}')">Проверить</button>
+        </div>
+    `;
+}
 
 function renderDetailScreen(idiom) {
     const detailScreen = document.getElementById('screen-detail');
     const isFavorite = currentFavorites.includes(idiom.id);
-
-    // Генерация HTML для упражнений
-    const exercisesHtml = idiom.exercises.map(renderExerciseBlock).join('');
     
+    const exercisesHtml = idiom.exercises.map(renderExerciseBlock).join('');
+
     detailScreen.innerHTML = `
         <div class="detail-header">
-            <button onclick="showScreen('screen-idioms')">⟨</button>
+            <button onclick="showScreen('screen-dashboard')">⟨</button>
             <h2>${idiom.text}</h2>
             <span class="favorite-icon">${isFavorite ? '❤️' : '🤍'}</span>
         </div>
@@ -118,65 +271,34 @@ function renderDetailScreen(idiom) {
                 ${idiom.text} <span class="audio-icon" onclick="alert('Проигрывание аудио идиомы!')">🔊</span>
             </div>
             
-            <div class="content-line">
-                <span>Дословный перевод:</span> ${idiom.literalTranslation}
-            </div>
-
-            <div class="content-line">
-                <span>Значение:</span> ${idiom.meaning}
-            </div>
+            <div class="content-line"><span>Дословный перевод:</span> ${idiom.literalTranslation}</div>
+            <div class="content-line"><span>Значение:</span> ${idiom.meaning}</div>
             
             <div class="content-line">
-                <span>Пример:</span> <span class="example-text">${idiom.example}</span> <span class="audio-icon" onclick="alert('Проигрывание аудио примера!')">🔊</span>
+                <span>Пример:</span> <span class="example-text">${idiom.example}</span> 
+                <span class="audio-icon" onclick="alert('Проигрывание аудио примера!')">🔊</span>
             </div>
             
-            <div class="exercises-title">Упражнения:</div>
+            <div class="exercises-title">5 Упражнений на Практику:</div>
             <div class="exercise-grid">
                 ${exercisesHtml}
             </div>
+            
+            <button class="finish-button" onclick="alert('Отправить все ответы и обновить прогресс!')">Завершить урок</button>
         </div>
     `;
 
     showScreen('screen-detail');
 }
 
-// --- ФУНКЦИИ РЕНДЕРИНГА СПИСКОВ (Остаются прежними, но без логики блокировки) ---
-
-function renderIdioms() {
-    const listContainer = document.getElementById('idiom-list');
-    listContainer.innerHTML = '';
-
-    IDIOM_DATA.forEach(idiom => {
-        const isFavorite = currentFavorites.includes(idiom.id);
-        
-        const card = document.createElement('div');
-        card.className = `idiom-card`;
-        card.innerHTML = `
-            <div class="meme-icon">${idiom.meme}</div>
-            <span class="idiom-text">${idiom.text}</span>
-            <span class="favorite-icon">${isFavorite ? '❤️' : '🤍'}</span>
-        `;
-        
-        card.addEventListener('click', () => {
-             const selectedIdiom = IDIOM_DATA.find(i => i.id === idiom.id);
-             // Проверяем, есть ли полные данные для рендеринга
-             if (selectedIdiom.meaning) { 
-                 renderDetailScreen(selectedIdiom);
-             } else {
-                 alert(`Нет полных данных для идиомы: ${idiom.text}. (Отображаем только Ser pan comido)`);
-             }
-        });
-        
-        listContainer.appendChild(card);
-    });
-}
-
-
-// --- ИНИЦИАЛИЗАЦИЯ И ОБРАБОТЧИКИ ---
+// =================================================================
+// 6. ИНИЦИАЛИЗАЦИЯ ПРИЛОЖЕНИЯ
+// =================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Загрузка данных в список
-    renderIdioms();
+    
+    // Рендеринг Главного Хаба при загрузке
+    renderDashboard();
 
     // 2. Обработчик навигации
     document.querySelectorAll('#bottom-nav button').forEach(button => {
@@ -186,6 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Показать начальный экран
-    showScreen('screen-idioms');
+    // Показать начальный экран (Хаб)
+    showScreen('screen-dashboard');
 });
