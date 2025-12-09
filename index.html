@@ -15,9 +15,14 @@
             <div class="logo">IdioMona 🐒</div>
         </header>
 
-        <div id="screen-idioms" class="screen active">
+        <div id="screen-dashboard" class="screen active">
+            </div>
+
+        <div id="screen-catalog" class="screen">
             <h2>📚 Каталог Идиом</h2>
             <input type="text" id="search-input" placeholder="🔍 Поиск идиом...">
+            <div id="topic-filters" class="filters">
+                </div>
             <div id="idiom-list" class="content-list">
                 </div>
         </div>
@@ -25,26 +30,27 @@
         <div id="screen-favorites" class="screen">
             <h2>⭐ Избранное</h2>
             <div id="favorites-list" class="content-list">
-                <p class="empty-state">У вас пока нет избранных идиом.</p>
+                <p class="empty-state">Здесь будут ваши любимые идиомы.</p>
             </div>
         </div>
-
-        <div id="screen-add-exercises" class="screen">
-             <h2>🏋️ Дополнительные Упражнения</h2>
-             </div>
-
+        
         <div id="screen-profile" class="screen">
-            <h2>👤 Профиль</h2>
-            </div>
+            <h2>👤 Профиль и Прогресс</h2>
+            <h3>📈 Мой Прогресс</h3>
+            <p>Изучено: 1/5 идиом (заглушка)</p>
+            <p>Последняя активность: Сегодня</p>
+            <hr>
+            <button onclick="window.open('https://t.me/your_school_chat', '_blank')">💬 Чат с преподавателем (Telegram)</button>
+        </div>
 
         <div id="screen-detail" class="screen detail-screen">
             </div>
 
         <nav id="bottom-nav">
-            <button data-screen="idioms" class="active">📖 Идиомы</button>
+            <button data-screen="dashboard" class="active">🏠 Главная</button>
+            <button data-screen="catalog">📚 Каталог</button>
             <button data-screen="favorites">🤍 Избранное</button>
-            <button data-screen="add-exercises">🧠 Доп. Упражнения</button>
-            <button data-screen="profile">🔒 Профиль</button>
+            <button data-screen="profile">👤 Профиль</button>
         </nav>
     </div>
 
