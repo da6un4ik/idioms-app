@@ -19,9 +19,9 @@ const IDIOM_DATA_SINGLE = {
     "meme": "🍞",
     
     // ПУТИ: Префикс 'idioms-app/' и расширение '.jpg'
-    "meme_url": "idioms-app/assets/images/ser_pan_comido.jpg", 
-    "audio_idiom_url": "idioms-app/assets/audio/ser_pan_comido.mp3", 
-    "audio_example_url": "idioms-app/assets/audio/example_pan_comido.mp3", 
+    "meme_url": "assets/images/ser_pan_comido.jpg", 
+    "audio_idiom_url": "assets/audio/ser_pan_comido.mp3", 
+    "audio_example_url": "assets/audio/example_pan_comido.mp3", 
     
     "topic": "Характер",
     "exercises": [
