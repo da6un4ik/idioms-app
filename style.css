@@ -8,8 +8,9 @@ body {
 
 .screen { display: none; padding: 20px; padding-bottom: 100px; animation: fadeIn 0.3s ease; }
 .screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Кнопки навигации */
+/* Навигация */
 #bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0; max-width: 600px; margin: 0 auto;
     background: #141414; border-top: 1px solid #333; display: flex; padding: 10px 0; z-index: 2000;
@@ -19,38 +20,49 @@ body {
     flex-direction: column; align-items: center; font-size: 11px; cursor: pointer;
 }
 #bottom-nav button.active { color: #fff; }
+#bottom-nav button span { font-size: 20px; margin-bottom: 4px; }
 
-/* Карточка Hero */
+/* Главный экран (Hero) */
 .netflix-hero {
-    height: 350px; background-size: cover; background-position: center; background-color: #222;
+    height: 400px; background-size: cover; background-position: center;
     margin: -20px -20px 20px -20px; padding: 30px 20px;
     display: flex; align-items: flex-end; position: relative;
+    background-color: #222;
 }
+
+.section-title {
+    font-size: 14px; font-weight: bold; color: #e5e5e5;
+    margin: 20px 0 10px 0; text-transform: uppercase; letter-spacing: 1px;
+}
+
+/* Списки и скролл */
+.horizontal-scroll { display: flex; gap: 12px; overflow-x: auto; margin: 0 -20px; padding: 0 20px 10px 20px; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.continue-card { min-width: 160px; background: #1a1a1a; border-radius: 4px; overflow: hidden; border: 1px solid #333; }
+.continue-thumb { height: 90px; background-size: cover; background-position: center; }
+
+/* Сетка каталога */
+.catalog-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.catalog-item img { width: 100%; aspect-ratio: 2/3; object-fit: cover; border-radius: 4px; border: 1px solid #333; }
+.catalog-item p { font-size: 11px; margin: 5px 0 10px 0; text-align: center; color: #aaa; }
 
 /* Упражнения */
 .exercise-block { background: #232323; border-radius: 8px; padding: 20px; margin-bottom: 20px; border: 1px solid #333; }
 .exercise-block h4 { color: #E50914; font-size: 12px; text-transform: uppercase; margin: 0 0 15px 0; }
 
-/* Вертикальные списки (Упр 1 и 5) */
 .radio-options {
-    display: flex !important; align-items: center; width: 100%; 
-    background: #333; border: 1px solid #444; padding: 14px 15px; 
-    margin-bottom: 10px; border-radius: 4px; cursor: pointer;
+    display: flex; align-items: center; width: 100%; background: #333; 
+    border: 1px solid #444; padding: 14px 15px; margin-bottom: 10px; border-radius: 4px; cursor: pointer;
 }
-.radio-options input { margin-right: 15px; width: 20px; height: 20px; flex-shrink: 0; accent-color: #E50914; }
-.selected-radio { border-color: #fff; background: #444; }
+.radio-options.selected-radio { border-color: #fff; background: #444; }
+.radio-options input { margin-right: 15px; accent-color: #E50914; width: 18px; height: 18px; }
 
-/* Конструктор (Упр 4) */
-.sentence-area { background: #141414; border: 1px dashed #555; min-height: 65px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; margin: 15px 0; border-radius: 4px; }
-.word-chip { background: #E50914; color: #fff; padding: 8px 15px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; }
+.sentence-area { background: #141414; border: 1px dashed #555; min-height: 60px; display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; margin: 15px 0; border-radius: 4px; }
+.word-chip { background: #E50914; color: #fff; padding: 8px 12px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; font-size: 13px; }
 
-/* Сопоставление (Упр 3) */
-.matching-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
-.match-item { background: #333; border: 1px solid #444; padding: 12px; text-align: center; border-radius: 4px; cursor: pointer; font-size: 14px; min-height: 50px; display: flex; align-items: center; justify-content: center; }
-.match-item.selected { border-color: #fff; background: #444; }
-.match-item.matched { background: #46d369; color: #000; border-color: #46d369; }
-
-/* Общее */
-.audio-btn { background: rgba(255,255,255,0.15); border-radius: 50%; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 10px; vertical-align: middle; }
-.check-btn { width: 100%; background: #fff; color: #000; padding: 14px; margin-top: 15px; border-radius: 4px; font-weight: bold; border: none; font-size: 16px; cursor: pointer; }
+/* Кнопки */
+.check-btn { width: 100%; background: #fff; color: #000; padding: 14px; margin-top: 10px; border-radius: 4px; font-weight: bold; border: none; cursor: pointer; }
+.audio-btn { background: rgba(255,255,255,0.15); border-radius: 50%; width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; margin-left: 8px; vertical-align: middle; }
 .correct { color: #46d369; font-weight: bold; display: block; margin-top: 10px; }
