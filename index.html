@@ -2,57 +2,44 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IdioMona: Испанские Идиомы</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Idiomas Netflix Edition</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="app">
-
-        <header id="main-header">
-            <div class="logo">IdioMona 🐒</div>
-        </header>
-
-        <div id="screen-dashboard" class="screen active">
-            </div>
-
-        <div id="screen-catalog" class="screen">
-            <h2>📚 Каталог Идиом</h2>
-            <input type="text" id="search-input" placeholder="🔍 Поиск идиом...">
-            <div id="topic-filters" class="filters">
-                </div>
-            <div id="idiom-list" class="content-list">
-                </div>
+    <div id="screen-dashboard" class="screen active">
         </div>
 
-        <div id="screen-favorites" class="screen">
-            <h2>⭐ Избранное</h2>
-            <div id="favorites-list" class="content-list">
-                <p class="empty-state">Здесь будут ваши любимые идиомы.</p>
+    <div id="screen-catalog" class="screen">
+        <div id="idiom-list">
             </div>
-        </div>
-        
-        <div id="screen-profile" class="screen">
-            <h2>👤 Профиль и Прогресс</h2>
-            <h3>📈 Мой Прогресс</h3>
-            <p>Изучено: 1/5 идиом (заглушка)</p>
-            <p>Последняя активность: Сегодня</p>
-            <hr>
-            <button onclick="window.open('https://t.me/your_school_chat', '_blank')">💬 Чат с преподавателем (Telegram)</button>
-        </div>
-
-        <div id="screen-detail" class="screen detail-screen">
-            </div>
-
-        <nav id="bottom-nav">
-            <button data-screen="dashboard" class="active">🏠 Главная</button>
-            <button data-screen="catalog">📚 Каталог</button>
-            <button data-screen="favorites">🤍 Избранное</button>
-            <button data-screen="profile">👤 Профиль</button>
-        </nav>
     </div>
+
+    <div id="screen-favorites" class="screen">
+        <div class="dashboard-section-title">Мой список</div>
+        <div id="favorites-list">
+            <p class="empty-state">Вы еще ничего не добавили в свой список.</p>
+        </div>
+    </div>
+
+    <div id="screen-detail" class="screen">
+        </div>
+
+    <nav id="bottom-nav">
+        <button data-screen="dashboard" class="active">
+            <span class="nav-icon">🏠</span>
+            <span>Главная</span>
+        </button>
+        <button data-screen="catalog">
+            <span class="nav-icon">🎞️</span>
+            <span>Каталог</span>
+        </button>
+        <button data-screen="favorites">
+            <span class="nav-icon">➕</span>
+            <span>Мой список</span>
+        </button>
+    </nav>
 
     <script src="script.js"></script>
 </body>
