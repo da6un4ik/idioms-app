@@ -4,7 +4,7 @@ const IDIOM_DATA = [
         text: "Ser pan comido",
         meaning: "Быть очень легким, проще простого.",
         example: "No te preocupes por el examen, ¡será pan comido!",
-        image: "assets/ser_pan_comido.jpg", 
+        image: "assets/images/ser_pan_comido.jpg", 
         audio_main: "assets/audio/ser_pan_comido.mp3",
         audio_example: "assets/audio/example_pan_comido.mp3",
         exercises: [
