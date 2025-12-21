@@ -1,61 +1,55 @@
 /* =========================================================
-   0. NETFLIX DARK THEME & GLOBALS
+   1. GLOBAL SETTINGS & NETFLIX THEME
    ========================================================= */
+* {
+    box-sizing: border-box; /* Чтобы padding не раздувал блоки */
+    -webkit-tap-highlight-color: transparent; /* Убирает синий блик при клике на мобильных */
+}
+
 body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #141414; /* Фирменный черный Netflix */
+    background-color: #141414; /* Черный Netflix */
     color: #ffffff;
     max-width: 600px;
     margin: 0 auto;
-    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
 }
 
 h1, h2, h3, h4 {
-    color: #e5e5e5;
-    margin: 15px 0;
+    margin: 10px 0;
     font-weight: 700;
 }
 
 button {
     cursor: pointer;
     border: none;
-    border-radius: 4px; /* У Netflix более острые углы */
+    border-radius: 4px;
     padding: 12px 20px;
     font-weight: bold;
-    text-transform: uppercase;
     transition: all 0.2s ease;
 }
 
 .screen {
-    padding-bottom: 90px;
     display: none;
     padding: 20px;
-    animation: fadeIn 0.4s ease;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    padding-bottom: 100px; /* Место для навигации */
+    animation: fadeIn 0.3s ease;
 }
 
 .screen.active {
     display: block;
 }
 
-/* =========================================================
-   1. NAVIGATION (TOP & BOTTOM)
-   ========================================================= */
-
-#main-header {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
-    padding: 20px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
+/* =========================================================
+   2. NAVIGATION (BOTTOM BAR)
+   ========================================================= */
 #bottom-nav {
     position: fixed;
     bottom: 0;
@@ -68,7 +62,7 @@ button {
     display: flex;
     justify-content: space-around;
     padding: 10px 0;
-    z-index: 1001;
+    z-index: 2000;
 }
 
 #bottom-nav button {
@@ -79,7 +73,7 @@ button {
     align-items: center;
     font-size: 11px;
     padding: 5px;
-    text-transform: none;
+    width: 33%;
 }
 
 #bottom-nav button.active {
@@ -90,317 +84,237 @@ button {
     content: '';
     width: 20px;
     height: 2px;
-    background-color: #E50914; /* Красная полоска под активной иконкой */
-    margin-top: 4px;
+    background-color: #E50914;
+    margin-top: 5px;
+}
+
+.nav-icon {
+    font-size: 20px;
+    margin-bottom: 4px;
 }
 
 /* =========================================================
-   2. DASHBOARD & CARDS
+   3. DASHBOARD / NETFLIX HERO
    ========================================================= */
-
-.dashboard-greeting h1 {
-    font-size: 28px;
-    color: #fff;
-}
-
-.cta-main-button {
-    width: 100%;
-    background-color: #E50914;
-    color: white;
-    font-size: 16px;
-    border-radius: 4px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-.cta-main-button:active {
-    transform: scale(0.98);
-    background-color: #b20710;
-}
-
-.dashboard-block {
-    background-color: #2f2f2f;
-    border-radius: 4px;
-    padding: 0; /* Для изображения на весь блок */
-    margin-bottom: 20px;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid transparent;
-}
-
-.idiom-of-day .block-content {
-    padding: 15px;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-}
-
-.idiom-text-day {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.dashboard-actions {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-}
-
-.action-block {
-    background-color: #333;
-    padding: 15px;
-    text-align: center;
-}
-
-.idiom-card {
+.netflix-hero {
+    height: 450px;
+    background-size: cover;
+    background-position: center;
     display: flex;
-    align-items: center;
-    background-color: #181818;
-    margin-bottom: 8px;
-    padding: 10px;
-    border-radius: 4px;
-    transition: background-color 0.2s;
+    align-items: flex-end;
+    margin: -20px -20px 20px -20px;
+    padding: 30px 20px;
+    position: relative;
 }
 
-.idiom-card:active {
-    background-color: #333;
+.hero-content {
+    width: 100%;
+    z-index: 2;
 }
 
-.idiom-card .idiom-info {
-    margin-left: 15px;
-    flex: 1;
-}
-
-.idiom-card .idiom-text {
-    font-size: 16px;
+.hero-label {
+    color: #a3a3a3;
+    font-size: 12px;
+    letter-spacing: 2px;
     font-weight: bold;
+}
+
+.hero-title {
+    font-size: 36px;
+    margin: 10px 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.play-btn { background-color: #fff; color: #000; }
+.info-btn { background-color: rgba(109, 109, 110, 0.7); color: #fff; }
+
+.dashboard-section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 20px 0 15px 0;
     color: #e5e5e5;
 }
 
-/* =========================================================
-   3. DETAIL SCREEN (WATCH VIEW)
-   ========================================================= */
-
-.detail-header {
-    background-color: #141414;
+/* Netflix Style List Cards */
+.netflix-card {
     display: flex;
-    padding: 15px;
+    background-color: #181818;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.card-thumb {
+    width: 120px;
+    height: 70px;
+    flex-shrink: 0;
+    background-color: #333;
+    display: flex;
     align-items: center;
+    justify-content: center;
+}
+
+.card-body {
+    padding: 10px 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.card-title { font-weight: bold; font-size: 15px; }
+.card-meta { font-size: 12px; color: #808080; margin-top: 4px; }
+
+/* =========================================================
+   4. DETAIL PAGE & EXERCISES (КЛЮЧЕВОЙ ФИКС)
+   ========================================================= */
+.detail-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    margin-bottom: 20px;
 }
 
 .detail-header button {
     background: none;
     color: white;
     font-size: 24px;
+    padding: 0 15px 0 0;
 }
 
 .meme-image-container {
     width: 100%;
-    aspect-ratio: 16 / 9; /* Как в кино */
-    background-color: #000;
+    aspect-ratio: 16 / 9;
     border-radius: 4px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background-size: cover;
+    background-position: center;
     margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
 }
 
 .idiom-title-block {
-    font-size: 26px;
+    font-size: 24px;
     border-left: 4px solid #E50914;
     padding-left: 15px;
     margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-
-.audio-icon {
-    color: #E50914;
-    margin-left: 10px;
-}
-
-.content-line {
-    color: #a3a3a3;
-    margin-bottom: 12px;
-}
-
-.content-line span {
-    color: #fff;
-    font-weight: bold;
-}
-
-/* =========================================================
-   4. EXERCISES (INTERACTIVE)
-   ========================================================= */
 
 .exercise-block {
     background-color: #232323;
-    border-radius: 4px;
-    padding: 20px;
-    margin-bottom: 15px;
+    border-radius: 8px;
+    padding: 18px;
+    margin-bottom: 20px;
+    border: 1px solid #333;
+    width: 100%;
 }
 
 .exercise-block h4 {
     color: #E50914;
-    font-size: 14px;
-    letter-spacing: 1px;
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
 }
 
-.radio-options {
-    background-color: #333;
+/* Инпуты */
+.exercise-block input[type="text"] {
+    width: 100%;
+    background-color: #181818;
     border: 1px solid #444;
     color: #fff;
     padding: 12px;
-    margin-bottom: 8px;
-    border-radius: 2px;
+    border-radius: 4px;
+    margin: 10px 0;
 }
 
-.exercise-block input[type="text"] {
-    background-color: #333;
-    border: 1px solid #444;
-    color: white;
-    padding: 10px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.exercise-block button {
-    background-color: #fff;
-    color: #000;
-    width: 100%;
-    margin-top: 15px;
-}
-
-/* Feedback */
-.exercise-block.correct-answer { border-left: 5px solid #46d369; }
-.exercise-block.incorrect-answer { border-left: 5px solid #E50914; }
-
-/* Word Constructor */
+/* Конструктор предложений */
 .sentence-area {
-    background-color: #181818;
-    border: 1px solid #333;
-    min-height: 50px;
+    background-color: #141414;
+    border: 1px dashed #444;
+    min-height: 70px;
+    display: flex;
+    flex-wrap: wrap; /* Чтобы слова переносились */
+    gap: 8px;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 4px;
+}
+
+.word-bank {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
 }
 
 .word-chip {
     background-color: #E50914;
-    border-radius: 2px;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 14px;
     font-weight: bold;
-}
-
-/* Matching */
-.match-item {
-    background-color: #333;
-    border: 1px solid #444;
-}
-
-.match-item.selected {
-    background-color: #E50914;
-    border-color: #fff;
-}
-
-.match-item.matched {
-    background-color: #46d369;
-    color: #000;
-}
-/* Netflix Hero Section */
-.netflix-hero {
-    height: 400px;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: flex-end;
-    margin: -20px -20px 20px -20px; /* Выход за границы паддинга экрана */
-    padding: 20px;
-    position: relative;
     cursor: pointer;
 }
 
-.hero-content {
-    width: 100%;
+/* Сопоставление пар */
+.matching-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Ровно 2 колонки */
+    gap: 12px;
+    margin: 15px 0;
 }
 
-.hero-label {
-    color: #a3a3a3;
-    font-size: 12px;
-    font-weight: bold;
-    letter-spacing: 2px;
-}
-
-.hero-title {
-    font-size: 32px;
-    margin: 5px 0;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-}
-
-.hero-description {
-    font-size: 14px;
-    color: #e5e5e5;
-    margin-bottom: 15px;
-    max-width: 80%;
-}
-
-.hero-buttons {
+.matching-column {
     display: flex;
+    flex-direction: column;
     gap: 10px;
 }
 
-.play-btn {
-    background-color: #fff;
-    color: #000;
-    text-transform: none;
-    padding: 8px 20px;
-}
-
-.info-btn {
-    background-color: rgba(109, 109, 110, 0.7);
-    color: #fff;
-    text-transform: none;
-    padding: 8px 20px;
-}
-
-.dashboard-section-title {
-    font-size: 18px;
-    font-weight: bold;
-    margin: 20px 0 10px 0;
-    color: #fff;
-}
-
-/* Netflix Style Cards */
-.netflix-card {
-    display: flex;
-    background-color: #181818;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 10px;
-    cursor: pointer;
-}
-
-.card-thumb {
-    width: 100px;
-    height: 60px;
+.match-item {
     background-color: #333;
+    border: 1px solid #444;
+    padding: 12px 8px;
+    text-align: center;
+    border-radius: 4px;
+    min-height: 55px;
+    font-size: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    cursor: pointer;
 }
 
-.card-body {
-    padding: 10px;
-    flex: 1;
+.match-item.selected { border-color: #fff; background-color: #444; }
+.match-item.matched { background-color: #46d369; color: #000; border-color: #46d369; }
+.match-item.mismatch { background-color: #E50914; border-color: #fff; animation: shake 0.3s; }
+
+/* Кнопка проверки в упражнении */
+.exercise-block button {
+    width: 100%;
+    margin-top: 15px;
+    background-color: #e5e5e5;
+    color: #000;
 }
 
-.card-header-row {
-    display: flex;
-    justify-content: space-between;
-}
-
-.card-title {
-    font-weight: bold;
+.result-feedback {
+    margin-top: 10px;
     font-size: 14px;
 }
 
-.card-meta {
-    font-size: 11px;
-    color: #808080;
-    display: block;
-    margin-top: 4px;
+.correct { color: #46d369; font-weight: bold; }
+.incorrect { color: #E50914; font-weight: bold; }
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }
