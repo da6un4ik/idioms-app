@@ -3,19 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Idiomas Netflix</title>
+    <title>Español Idiomas - Netflix Style</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="screen-dashboard" class="screen active"></div>
-    <div id="screen-catalog" class="screen"><div id="idiom-list"></div></div>
-    <div id="screen-favorites" class="screen"><div id="favorites-list"></div></div>
-    <div id="screen-detail" class="screen"></div>
+
+    <div id="screen-dashboard" class="screen active">
+        </div>
+
+    <div id="screen-catalog" class="screen">
+        <h2 style="margin-top: 20px; margin-bottom: 15px;">Поиск</h2>
+        <div style="position: sticky; top: 0; z-index: 100; background: #141414; padding-bottom: 10px;">
+            <input type="text" id="search-input" placeholder="Найти идиому или значение...">
+        </div>
+        <div id="idiom-list">
+            </div>
+    </div>
+
+    <div id="screen-favorites" class="screen">
+        <div id="favorites-list">
+            </div>
+    </div>
+
+    <div id="screen-detail" class="screen">
+        </div>
 
     <nav id="bottom-nav">
-        <button data-screen="dashboard" class="active"><span>🏠</span><span>Главная</span></button>
-        <button data-screen="catalog"><span>🎞️</span><span>Каталог</span></button>
-        <button data-screen="favorites"><span>➕</span><span>Мой список</span></button>
+        <button data-screen="dashboard" class="active">
+            <span>🏠</span>
+            Главная
+        </button>
+        <button data-screen="catalog">
+            <span>🔍</span>
+            Каталог
+        </button>
+        <button data-screen="favorites">
+            <span>❤️</span>
+            Мой список
+        </button>
     </nav>
 
     <script src="script.js"></script>
