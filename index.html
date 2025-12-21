@@ -3,41 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Idiomas Netflix Edition</title>
+    <title>Idiomas Netflix</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="screen-dashboard" class="screen active">
-        </div>
-
-    <div id="screen-catalog" class="screen">
-        <div id="idiom-list">
-            </div>
-    </div>
-
+    <div id="screen-dashboard" class="screen active"></div>
+    <div id="screen-catalog" class="screen"><div id="idiom-list"></div></div>
     <div id="screen-favorites" class="screen">
         <div class="dashboard-section-title">Мой список</div>
-        <div id="favorites-list">
-            <p class="empty-state">Вы еще ничего не добавили в свой список.</p>
-        </div>
+        <div id="favorites-list"></div>
     </div>
-
-    <div id="screen-detail" class="screen">
-        </div>
+    <div id="screen-detail" class="screen"></div>
 
     <nav id="bottom-nav">
         <button data-screen="dashboard" class="active">
-            <span class="nav-icon">🏠</span>
-            <span>Главная</span>
+            <span class="nav-icon">🏠</span><span>Главная</span>
         </button>
         <button data-screen="catalog">
-            <span class="nav-icon">🎞️</span>
-            <span>Каталог</span>
+            <span class="nav-icon">🎞️</span><span>Каталог</span>
         </button>
         <button data-screen="favorites">
-            <span class="nav-icon">➕</span>
-            <span>Мой список</span>
+            <span class="nav-icon">➕</span><span>Мой список</span>
         </button>
     </nav>
 
