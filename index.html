@@ -8,38 +8,40 @@
 </head>
 <body>
 
-    <div id="screen-dashboard" class="screen active">
+    <div id="dashboard" class="screen active">
         </div>
 
-    <div id="screen-catalog" class="screen">
-        <h2 style="margin-top: 20px; margin-bottom: 15px;">Поиск</h2>
-        <div style="position: sticky; top: 0; z-index: 100; background: #141414; padding-bottom: 10px;">
-            <input type="text" id="search-input" placeholder="Найти идиому или значение...">
+    <div id="catalog" class="screen">
+        <div style="padding: 20px 20px 0 20px;">
+            <h2 style="margin-bottom: 15px;">Поиск</h2>
+            <div style="position: sticky; top: 0; z-index: 100; background: #141414; padding-bottom: 10px;">
+                <input type="text" id="search-input" placeholder="Найти идиому или значение...">
+            </div>
         </div>
-        <div id="idiom-list">
+        <div id="idiom-list" style="padding: 0 20px;">
             </div>
     </div>
 
-    <div id="screen-favorites" class="screen">
+    <div id="favorites" class="screen" style="padding: 20px;">
         <div id="favorites-list">
             </div>
     </div>
 
-    <div id="screen-detail" class="screen">
+    <div id="detail" class="screen" style="padding: 20px;">
         </div>
 
     <nav id="bottom-nav">
         <button data-screen="dashboard" class="active">
             <span>🏠</span>
-            Главная
+            <div style="font-size: 10px;">Главная</div>
         </button>
         <button data-screen="catalog">
             <span>🔍</span>
-            Каталог
+            <div style="font-size: 10px;">Каталог</div>
         </button>
         <button data-screen="favorites">
             <span>❤️</span>
-            Мой список
+            <div style="font-size: 10px;">Мой список</div>
         </button>
     </nav>
 
