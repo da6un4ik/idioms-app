@@ -1,3 +1,4 @@
+// --- 1. БАЗА ДАННЫХ ИДИОМ ---
 const IDIOM_DATA = [
     {
         id: 1,
@@ -44,48 +45,48 @@ const IDIOM_DATA = [
     }
 ];
 
-// Глобальные состояния
+// --- 2. ГЛОБАЛЬНЫЕ СОСТОЯНИЯ ---
 let favorites = JSON.parse(localStorage.getItem('idioms_favs')) || [];
 let completedIdioms = JSON.parse(localStorage.getItem('idioms_completed')) || [];
 
-function showScreen(id) {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('#bottom-nav button').forEach(b => b.classList.remove('active'));
-    
-    document.getElementById(`screen-${id}`).classList.add('active');
-    const navBtn = document.querySelector(`button[data-screen="${id}"]`);
-    if(navBtn) navBtn.classList.add('active');
+// --- 3. НАВИГАЦИЯ ---
+function showScreen(screenId) {
+    // Скрываем все экраны
+    document.querySelectorAll('.screen').forEach(s => {
+        s.classList.remove('active');
+        s.style.display = 'none';
+    });
 
-    if(id === 'dashboard') renderDashboard();
-    if(id === 'favorites') renderFavorites();
-    if(id === 'catalog') renderCatalog();
+    // Показываем нужный
+    const target = document.getElementById(screenId);
+    if (target) {
+        target.classList.add('active');
+        target.style.display = 'block';
+    }
+
+    // Обновляем кнопки меню
+    document.querySelectorAll('#bottom-nav button').forEach(btn => {
+        btn.classList.remove('active');
+        if(btn.dataset.screen === screenId) btn.classList.add('active');
+    });
+
+    // Вызываем рендер контента
+    if (screenId === 'dashboard') renderDashboard();
+    if (screenId === 'catalog') renderCatalog();
+    if (screenId === 'favorites') renderFavorites();
+
     window.scrollTo(0,0);
 }
 
-// Управление прогрессом
-function toggleCompleted(id) {
-    const idx = completedIdioms.indexOf(id);
-    if (idx > -1) completedIdioms.splice(idx, 1);
-    else completedIdioms.push(id);
-    localStorage.setItem('idioms_completed', JSON.stringify(completedIdioms));
-    renderDetail(id);
-}
+// --- 4. ФУНКЦИИ РЕНДЕРА ---
 
-function toggleFavorite(id) {
-    const idx = favorites.indexOf(id);
-    if (idx > -1) favorites.splice(idx, 1);
-    else favorites.push(id);
-    localStorage.setItem('idioms_favs', JSON.stringify(favorites));
-    if(document.getElementById('screen-dashboard').classList.contains('active')) renderDashboard();
-}
-
-// Рендеры экранов
 function renderDashboard() {
-    const dash = document.getElementById('screen-dashboard');
-    // Предлагаем ПЕРВУЮ неизученную
+    const container = document.getElementById('dashboard');
+    if (!container) return;
+
     let hero = IDIOM_DATA.find(i => !completedIdioms.includes(i.id)) || IDIOM_DATA[0];
 
-    dash.innerHTML = `
+    container.innerHTML = `
         <div class="netflix-hero" style="background-image: linear-gradient(to top, #141414 15%, transparent), url('${hero.image}');">
             <div class="hero-content">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
@@ -98,8 +99,7 @@ function renderDashboard() {
                 <button class="check-btn" style="width:auto; padding:10px 25px;" onclick="renderDetail(${hero.id})">▶ Изучать</button>
             </div>
         </div>
-
-        <p class="section-title">Все идиомы</p>
+        <p class="section-title">Продолжить</p>
         <div class="horizontal-scroll no-scrollbar">
             ${IDIOM_DATA.map(idiom => `
                 <div class="continue-card" onclick="renderDetail(${idiom.id})" style="${completedIdioms.includes(idiom.id) ? 'opacity:0.6' : ''}">
@@ -113,73 +113,90 @@ function renderDashboard() {
 }
 
 function renderCatalog(filter = "") {
-    const container = document.getElementById('idiom-list');
+    const listContainer = document.getElementById('idiom-list');
+    if (!listContainer) return;
+
     const filtered = IDIOM_DATA.filter(i => 
         i.text.toLowerCase().includes(filter.toLowerCase()) || 
         i.meaning.toLowerCase().includes(filter.toLowerCase())
     );
 
-    container.innerHTML = `<h2 style="margin-top:20px;">Каталог</h2>
+    listContainer.innerHTML = `
         <div class="catalog-grid">
             ${filtered.map(idiom => `
                 <div class="catalog-item" onclick="renderDetail(${idiom.id})">
                     <img src="${idiom.image}">
                     ${completedIdioms.includes(idiom.id) ? '<div class="badge-done">✓</div>' : ''}
                     <p>${idiom.text}</p>
-                </div>`).join('')}
-        </div>`;
+                </div>
+            `).join('')}
+        </div>
+        ${filtered.length === 0 ? '<p style="text-align:center; color:#666; margin-top:20px;">Ничего не найдено</p>' : ''}
+    `;
+}
+
+function renderFavorites() {
+    const container = document.getElementById('favorites-list');
+    if (!container) return;
+
+    const favData = IDIOM_DATA.filter(i => favorites.includes(i.id));
+    
+    container.innerHTML = `<h2 style="margin-top:20px;">Мой список</h2>`;
+    if(favData.length === 0) {
+        container.innerHTML += `<div style="text-align:center; margin-top:100px; color:#666;"><p>Список пуст</p></div>`;
+    } else {
+        container.innerHTML += `<div class="catalog-grid">${favData.map(idiom => `
+            <div class="catalog-item" onclick="renderDetail(${idiom.id})">
+                <img src="${idiom.image}">
+                <p>${idiom.text}</p>
+            </div>`).join('')}</div>`;
+    }
 }
 
 function renderDetail(id) {
     const idiom = IDIOM_DATA.find(i => i.id === id);
-    const detail = document.getElementById('screen-detail');
+    const container = document.getElementById('detail');
+    if (!container) return;
+
     const isDone = completedIdioms.includes(id);
 
-    detail.innerHTML = `
+    container.innerHTML = `
         <button onclick="showScreen('dashboard')" style="background:none; color:white; font-size:24px; border:none; padding:20px 0; cursor:pointer;">← Назад</button>
         <div style="width:100%; height:200px; border-radius:8px; background: #222 url('${idiom.image}') center/cover; margin-bottom: 20px;"></div>
         
         <div style="display:flex; justify-content:space-between; align-items:center;">
              <h2 style="margin:0;">${idiom.text}</h2>
-             <button onclick="toggleFavorite(${idiom.id}); renderDetail(${idiom.id})" style="background:none; border:none; color:white; font-size:24px;">
+             <button onclick="toggleFavorite(${idiom.id})" style="background:none; border:none; color:white; font-size:24px;">
                 ${favorites.includes(id) ? '❤️' : '🤍'}
              </button>
         </div>
         <p style="color:#aaa; margin:10px 0 20px 0;">${idiom.meaning}</p>
 
         <button onclick="toggleCompleted(${id})" class="btn-done-action" 
-                style="background:${isDone ? '#46d369' : 'transparent'}; color:${isDone ? '#000' : '#46d369'}; border:1px solid #46d369;">
+                style="background:${isDone ? '#46d369' : 'transparent'}; color:${isDone ? '#000' : '#46d369'}; border:1px solid #46d369; width:100%; padding:15px; border-radius:4px; font-weight:bold;">
             ${isDone ? '✅ ВЫУЧЕНО' : 'ОТМЕТИТЬ КАК ВЫУЧЕННОЕ'}
         </button>
 
-        <div class="exercise-grid">
-            ${idiom.exercises.map(ex => renderExercise(ex, idiom)).join('')}
-        </div>
+        <div class="exercise-grid">${idiom.exercises.map(ex => renderExercise(ex, idiom)).join('')}</div>
     `;
     showScreen('detail');
 }
 
-// ... (Функции renderExercise, checkAnswer, moveWord остаются прежними) ...
+// --- 5. ЛОГИКА УПРАЖНЕНИЙ ---
 function renderExercise(ex, idiom) {
     let content = '';
     if (ex.type === "Выбор значения") {
         content = ex.options.map(opt => `
-            <label class="radio-options" onclick="selectRadio(this)">
-                <input type="radio" name="${ex.id}" value="${opt}"> <span>${opt}</span>
+            <label class="radio-options" style="display:flex; align-items:center; margin-bottom:10px; background:#333; padding:10px; border-radius:5px;">
+                <input type="radio" name="${ex.id}" value="${opt}" style="margin-right:10px;"> <span>${opt}</span>
             </label>`).join('');
     } else if (ex.type === "Вставка слова") {
-        content = `<p>${ex.prompt}</p><input type="text" id="in-${ex.id}" style="width:100%; padding:14px; background:#141414; color:#fff; border:1px solid #444; border-radius:4px;">`;
+        content = `<p>${ex.prompt}</p><input type="text" id="in-${ex.id}" style="width:100%; padding:12px; background:#141414; color:#fff; border:1px solid #444;">`;
     } else if (ex.type === "Конструктор") {
-        content = `<div class="sentence-area" id="res-${ex.id}"></div>
-                   <div class="word-bank">${ex.words.map(w => `<button class="word-chip" onclick="moveWord(this, '${ex.id}')">${w}</button>`).join('')}</div>`;
+        content = `<div class="sentence-area" id="res-${ex.id}" style="border:1px dashed #555; min-height:50px; padding:10px; margin-bottom:10px;"></div>
+                   <div class="word-bank">${ex.words.map(w => `<button class="word-chip" onclick="moveWord(this, '${ex.id}')" style="margin:2px;">${w}</button>`).join('')}</div>`;
     }
-    return `<div class="exercise-block" id="block-${ex.id}"><h4>${ex.type}</h4><p>${ex.question}</p>${content}<div id="feed-${ex.id}"></div><button class="check-btn" onclick="checkAnswer('${ex.id}', ${idiom.id})">ПРОВЕРИТЬ</button></div>`;
-}
-
-function selectRadio(el) {
-    el.parentElement.querySelectorAll('.radio-options').forEach(r => r.classList.remove('selected-radio'));
-    el.classList.add('selected-radio');
-    el.querySelector('input').checked = true;
+    return `<div class="exercise-block"><h4>${ex.type}</h4><p>${ex.question}</p>${content}<div id="feed-${ex.id}"></div><button class="check-btn" onclick="checkAnswer('${ex.id}', ${idiom.id})">ПРОВЕРИТЬ</button></div>`;
 }
 
 function moveWord(btn, id) {
@@ -191,24 +208,46 @@ function moveWord(btn, id) {
 function checkAnswer(exId, idiomId) {
     const idiom = IDIOM_DATA.find(i => i.id === idiomId);
     const ex = idiom.exercises.find(e => e.id === exId);
-    const block = document.getElementById(`block-${exId}`);
     const feed = document.getElementById(`feed-${exId}`);
     let correct = false;
 
     if (ex.type === "Выбор значения") {
-        const sel = block.querySelector('input:checked');
+        const sel = document.querySelector(`input[name="${exId}"]:checked`);
         correct = sel && sel.value === ex.answer;
     } else if (ex.type === "Вставка слова") {
         correct = document.getElementById(`in-${exId}`).value.trim().toLowerCase() === ex.answer.toLowerCase();
     } else if (ex.type === "Конструктор") {
         correct = Array.from(document.getElementById(`res-${exId}`).children).map(c => c.innerText).join(' ') === ex.answer;
     }
-    feed.innerHTML = correct ? '<span class="correct">✅ Верно!</span>' : '<span style="color:#E50914; display:block; margin-top:10px;">❌ Ошибка</span>';
+    feed.innerHTML = correct ? '<span style="color:#46d369;">✅ Верно!</span>' : '<span style="color:#E50914;">❌ Ошибка</span>';
 }
 
-// Слушатель поиска
-document.getElementById('search-input')?.addEventListener('input', (e) => {
-    renderCatalog(e.target.value);
+// --- 6. ОБРАБОТЧИКИ СОБЫТИЙ ---
+function toggleCompleted(id) {
+    const idx = completedIdioms.indexOf(id);
+    if (idx > -1) completedIdioms.splice(idx, 1);
+    else completedIdioms.push(id);
+    localStorage.setItem('idioms_completed', JSON.stringify(completedIdioms));
+    renderDetail(id);
+}
+
+function toggleFavorite(id) {
+    const idx = favorites.indexOf(id);
+    if (idx > -1) favorites.splice(idx, 1);
+    else favorites.push(id);
+    localStorage.setItem('idioms_favs', JSON.stringify(favorites));
+    renderDetail(id);
+}
+
+// Навигация
+document.querySelectorAll('#bottom-nav button').forEach(btn => {
+    btn.addEventListener('click', () => showScreen(btn.dataset.screen));
 });
 
+// Поиск
+document.addEventListener('input', (e) => {
+    if (e.target.id === 'search-input') renderCatalog(e.target.value);
+});
+
+// Старт приложения
 showScreen('dashboard');
