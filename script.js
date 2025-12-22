@@ -1,4 +1,4 @@
-// --- 1. БАЗА ДАННЫХ ИДИОМ ---
+// 1. ДАННЫЕ
 const IDIOM_DATA = [
     {
         id: 1,
@@ -6,105 +6,100 @@ const IDIOM_DATA = [
         meaning: "Проще простого (раз плюнуть).",
         example: "No te preocupes por el examen, ¡será pan comido!",
         image: "assets/images/ser_pan_comido.jpg", 
-        audio_main: "assets/audio/ser_pan_comido.mp3",
-        audio_example: "assets/audio/example_pan_comido.mp3",
         category: "Легкость",
         exercises: [
-            { id: "ex1_1", type: "Выбор значения", question: "Что означает эта идиома?", options: ["Очень вкусно", "Очень легким", "Очень быстрым"], answer: "Очень легким" },
-            { id: "ex1_2", type: "Вставка слова", question: "Дополни фразу:", prompt: "El examen es pan ___.", answer: "comido" },
-            { id: "ex1_4", type: "Конструктор", question: "Собери фразу:", words: ["SERÁ", "PAN", "COMIDO"], answer: "SERÁ PAN COMIDO" }
+            { id: "ex1_1", type: "Выбор значения", question: "Что это означает?", options: ["Очень вкусно", "Очень легко"], answer: "Очень легко" },
+            { id: "ex1_2", type: "Вставка слова", question: "Дополни:", prompt: "El examen es pan ___.", answer: "comido" }
         ]
     },
     {
         id: 2,
         text: "Estar en las nubes",
-        meaning: "Витать в облаках (быть рассеянным).",
+        meaning: "Витать в облаках (рассеянность).",
         example: "¡Escucha! Siempre estás en las nubes.",
         image: "assets/images/estar_en_las_nubes.jpg", 
-        audio_main: "assets/audio/estar_en_las_nubes.mp3",
-        audio_example: "assets/audio/example_nubes.mp3",
         category: "Внимание",
         exercises: [
-            { id: "ex2_1", type: "Выбор значения", question: "Что означает эта идиома?", options: ["Летать на самолете", "Быть рассеянным", "Любить погоду"], answer: "Быть рассеянным" },
-            { id: "ex2_2", type: "Вставка слова", question: "Дополни фразу:", prompt: "Escucha, ¡siempre estás en las ___!", answer: "nubes" }
+            { id: "ex2_1", type: "Выбор значения", question: "Что это означает?", options: ["Быть рассеянным", "Лететь"], answer: "Быть рассеянным" }
         ]
     },
     {
         id: 3,
         text: "Tirar la casa por la ventana",
-        meaning: "Сорить деньгами (гулять на всю катушку).",
+        meaning: "Сорить деньгами (праздник).",
         example: "Para su boda, tiraron la casa por la ventana.",
         image: "assets/images/casa_ventana.jpg", 
-        audio_main: "assets/audio/casa_ventana.mp3",
-        audio_example: "assets/audio/example_ventana.mp3",
         category: "Деньги",
         exercises: [
-            { id: "ex3_1", type: "Выбор значения", question: "В какой ситуации это говорят?", options: ["При переезде", "При больших тратах", "При ремонте"], answer: "При больших тратах" },
-            { id: "ex3_4", type: "Конструктор", question: "Собери фразу:", words: ["TIRARON", "LA", "CASA", "POR", "LA", "VENTANA"], answer: "TIRARON LA CASA POR LA VENTANA" }
+            { id: "ex3_1", type: "Вставка слова", question: "Дополни:", prompt: "Tiraron la casa por la ___.", answer: "ventana" }
         ]
     }
 ];
 
-// --- 2. ГЛОБАЛЬНЫЕ СОСТОЯНИЯ ---
+// 2. СОСТОЯНИЕ (LocalStorage)
 let favorites = JSON.parse(localStorage.getItem('idioms_favs')) || [];
 let completedIdioms = JSON.parse(localStorage.getItem('idioms_completed')) || [];
 
-// --- 3. НАВИГАЦИЯ ---
+// 3. НАВИГАЦИЯ (Работает для всех кнопок)
 function showScreen(screenId) {
-    // Скрываем все экраны
     document.querySelectorAll('.screen').forEach(s => {
-        s.classList.remove('active');
         s.style.display = 'none';
+        s.classList.remove('active');
     });
-
-    // Показываем нужный
     const target = document.getElementById(screenId);
     if (target) {
-        target.classList.add('active');
         target.style.display = 'block';
+        target.classList.add('active');
     }
-
-    // Обновляем кнопки меню
     document.querySelectorAll('#bottom-nav button').forEach(btn => {
-        btn.classList.remove('active');
-        if(btn.dataset.screen === screenId) btn.classList.add('active');
+        btn.classList.toggle('active', btn.dataset.screen === screenId);
     });
 
-    // Вызываем рендер контента
     if (screenId === 'dashboard') renderDashboard();
     if (screenId === 'catalog') renderCatalog();
     if (screenId === 'favorites') renderFavorites();
-
     window.scrollTo(0,0);
 }
 
-// --- 4. ФУНКЦИИ РЕНДЕРА ---
-
+// 4. ГЛАВНАЯ СТРАНИЦА (С ПРОГРЕССОМ)
 function renderDashboard() {
-    const container = document.getElementById('dashboard');
-    if (!container) return;
-
+    const dash = document.getElementById('dashboard');
     let hero = IDIOM_DATA.find(i => !completedIdioms.includes(i.id)) || IDIOM_DATA[0];
 
-    container.innerHTML = `
+    dash.innerHTML = `
         <div class="netflix-hero" style="background-image: linear-gradient(to top, #141414 15%, transparent), url('${hero.image}');">
             <div class="hero-content">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
                     <span style="background:#E50914; color:white; padding:2px 6px; border-radius:2px; font-size:12px; font-weight:bold;">N</span>
-                    <span style="letter-spacing:1px; font-size:11px; color:#aaa; font-weight:bold;">
-                        ${completedIdioms.includes(hero.id) ? 'ВЫУЧЕНО ✅' : 'РЕКОМЕНДУЕМ К ИЗУЧЕНИЮ'}
-                    </span>
+                    <span style="letter-spacing:1px; font-size:11px; color:#aaa; font-weight:bold;">ИДИОМА ДНЯ</span>
                 </div>
                 <h1 style="margin:0 0 15px 0; font-size:32px;">${hero.text}</h1>
-                <button class="check-btn" style="width:auto; padding:10px 25px;" onclick="renderDetail(${hero.id})">▶ Изучать</button>
+                <div style="display:flex; gap:10px;">
+                    <button class="check-btn" style="width:auto; padding:10px 25px;" onclick="renderDetail(${hero.id})">▶ Изучать</button>
+                    <button class="check-btn" style="width:auto; padding:10px 25px; background:rgba(255,255,255,0.2); color:white; border:none;" onclick="toggleFavorite(${hero.id})">
+                        ${favorites.includes(hero.id) ? '✓ В списке' : '+ Мой список'}
+                    </button>
+                </div>
             </div>
         </div>
-        <p class="section-title">Продолжить</p>
-        <div class="horizontal-scroll no-scrollbar">
+
+        <div style="padding: 0 20px; margin-bottom: 30px;">
+            <div style="background:#222; padding:15px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; border:1px solid #333;">
+                <div><div style="font-size:11px; color:#888;">УДАРНЫЙ ТЕМП</div><div style="font-size:18px; font-weight:bold;">🔥 5 ДНЕЙ</div></div>
+                <div style="text-align:right;"><div style="font-size:11px; color:#888;">ВЫУЧЕНО</div><div style="font-size:18px; font-weight:bold; color:#46d369;">
+                    ${Math.round((completedIdioms.length / IDIOM_DATA.length) * 100)}%
+                </div></div>
+            </div>
+        </div>
+
+        <p class="section-title" style="padding:0 20px;">ПРОДОЛЖИТЬ</p>
+        <div class="horizontal-scroll no-scrollbar" style="padding:0 20px;">
             ${IDIOM_DATA.map(idiom => `
                 <div class="continue-card" onclick="renderDetail(${idiom.id})" style="${completedIdioms.includes(idiom.id) ? 'opacity:0.6' : ''}">
-                    <div class="continue-thumb" style="background-image: url('${idiom.image}');"></div>
-                    ${completedIdioms.includes(idiom.id) ? '<div class="badge-done">✓</div>' : ''}
+                    <div class="continue-thumb" style="background-image: url('${idiom.image}');">
+                        ${completedIdioms.includes(idiom.id) ? '<div class="badge-done">✓</div>' : ''}
+                    </div>
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${completedIdioms.includes(idiom.id) ? '100%' : '30%'}"></div></div>
                     <div style="padding:10px; font-size:12px; font-weight:bold;">${idiom.text}</div>
                 </div>
             `).join('')}
@@ -112,142 +107,97 @@ function renderDashboard() {
     `;
 }
 
+// 5. КАТАЛОГ И ПОИСК
 function renderCatalog(filter = "") {
-    const listContainer = document.getElementById('idiom-list');
-    if (!listContainer) return;
-
-    const filtered = IDIOM_DATA.filter(i => 
-        i.text.toLowerCase().includes(filter.toLowerCase()) || 
-        i.meaning.toLowerCase().includes(filter.toLowerCase())
-    );
-
-    listContainer.innerHTML = `
-        <div class="catalog-grid">
-            ${filtered.map(idiom => `
-                <div class="catalog-item" onclick="renderDetail(${idiom.id})">
-                    <img src="${idiom.image}">
-                    ${completedIdioms.includes(idiom.id) ? '<div class="badge-done">✓</div>' : ''}
-                    <p>${idiom.text}</p>
-                </div>
-            `).join('')}
-        </div>
-        ${filtered.length === 0 ? '<p style="text-align:center; color:#666; margin-top:20px;">Ничего не найдено</p>' : ''}
-    `;
-}
-
-function renderFavorites() {
-    const container = document.getElementById('favorites-list');
-    if (!container) return;
-
-    const favData = IDIOM_DATA.filter(i => favorites.includes(i.id));
-    
-    container.innerHTML = `<h2 style="margin-top:20px;">Мой список</h2>`;
-    if(favData.length === 0) {
-        container.innerHTML += `<div style="text-align:center; margin-top:100px; color:#666;"><p>Список пуст</p></div>`;
-    } else {
-        container.innerHTML += `<div class="catalog-grid">${favData.map(idiom => `
+    const list = document.getElementById('idiom-list');
+    const filtered = IDIOM_DATA.filter(i => i.text.toLowerCase().includes(filter.toLowerCase()) || i.meaning.toLowerCase().includes(filter.toLowerCase()));
+    list.innerHTML = `<div class="catalog-grid" style="margin-top:20px;">
+        ${filtered.map(idiom => `
             <div class="catalog-item" onclick="renderDetail(${idiom.id})">
-                <img src="${idiom.image}">
+                <img src="${idiom.image}">${completedIdioms.includes(idiom.id) ? '<div class="badge-done">✓</div>' : ''}
                 <p>${idiom.text}</p>
-            </div>`).join('')}</div>`;
-    }
+            </div>`).join('')}
+    </div>`;
 }
 
+// 6. ДЕТАЛИ И УПРАЖНЕНИЯ
 function renderDetail(id) {
     const idiom = IDIOM_DATA.find(i => i.id === id);
     const container = document.getElementById('detail');
-    if (!container) return;
-
     const isDone = completedIdioms.includes(id);
 
     container.innerHTML = `
-        <button onclick="showScreen('dashboard')" style="background:none; color:white; font-size:24px; border:none; padding:20px 0; cursor:pointer;">← Назад</button>
-        <div style="width:100%; height:200px; border-radius:8px; background: #222 url('${idiom.image}') center/cover; margin-bottom: 20px;"></div>
-        
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-             <h2 style="margin:0;">${idiom.text}</h2>
-             <button onclick="toggleFavorite(${idiom.id})" style="background:none; border:none; color:white; font-size:24px;">
-                ${favorites.includes(id) ? '❤️' : '🤍'}
-             </button>
+        <button onclick="showScreen('dashboard')" style="background:none; color:white; border:none; padding:20px 0; cursor:pointer; font-size:18px;">← Назад</button>
+        <div style="width:100%; height:200px; border-radius:8px; background: url('${idiom.image}') center/cover; margin-bottom: 20px;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <h2 style="margin:0;">${idiom.text}</h2>
+            <button onclick="toggleFavorite(${idiom.id})" style="background:none; border:none; color:white; font-size:24px;">${favorites.includes(id) ? '❤️' : '🤍'}</button>
         </div>
-        <p style="color:#aaa; margin:10px 0 20px 0;">${idiom.meaning}</p>
-
-        <button onclick="toggleCompleted(${id})" class="btn-done-action" 
-                style="background:${isDone ? '#46d369' : 'transparent'}; color:${isDone ? '#000' : '#46d369'}; border:1px solid #46d369; width:100%; padding:15px; border-radius:4px; font-weight:bold;">
+        <p style="color:#aaa; margin-bottom:20px;">${idiom.meaning}</p>
+        <button onclick="toggleCompleted(${id})" style="width:100%; padding:15px; border-radius:4px; font-weight:bold; cursor:pointer; background:${isDone ? '#46d369' : 'transparent'}; color:${isDone ? '#000' : '#46d369'}; border:1px solid #46d369; margin-bottom:20px;">
             ${isDone ? '✅ ВЫУЧЕНО' : 'ОТМЕТИТЬ КАК ВЫУЧЕННОЕ'}
         </button>
-
         <div class="exercise-grid">${idiom.exercises.map(ex => renderExercise(ex, idiom)).join('')}</div>
     `;
     showScreen('detail');
 }
 
-// --- 5. ЛОГИКА УПРАЖНЕНИЙ ---
+// 7. ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 function renderExercise(ex, idiom) {
-    let content = '';
+    let html = `<div class="exercise-block" style="background:#222; padding:15px; border-radius:8px; margin-bottom:15px;">
+        <h4 style="color:#E50914; margin:0 0 10px 0;">${ex.type}</h4><p>${ex.question}</p>`;
     if (ex.type === "Выбор значения") {
-        content = ex.options.map(opt => `
-            <label class="radio-options" style="display:flex; align-items:center; margin-bottom:10px; background:#333; padding:10px; border-radius:5px;">
-                <input type="radio" name="${ex.id}" value="${opt}" style="margin-right:10px;"> <span>${opt}</span>
-            </label>`).join('');
-    } else if (ex.type === "Вставка слова") {
-        content = `<p>${ex.prompt}</p><input type="text" id="in-${ex.id}" style="width:100%; padding:12px; background:#141414; color:#fff; border:1px solid #444;">`;
-    } else if (ex.type === "Конструктор") {
-        content = `<div class="sentence-area" id="res-${ex.id}" style="border:1px dashed #555; min-height:50px; padding:10px; margin-bottom:10px;"></div>
-                   <div class="word-bank">${ex.words.map(w => `<button class="word-chip" onclick="moveWord(this, '${ex.id}')" style="margin:2px;">${w}</button>`).join('')}</div>`;
+        html += ex.options.map(opt => `<label style="display:block; margin-bottom:8px;"><input type="radio" name="${ex.id}" value="${opt}"> ${opt}</label>`).join('');
+    } else {
+        html += `<input type="text" id="in-${ex.id}" style="width:100%; padding:10px; background:#111; color:#fff; border:1px solid #444;">`;
     }
-    return `<div class="exercise-block"><h4>${ex.type}</h4><p>${ex.question}</p>${content}<div id="feed-${ex.id}"></div><button class="check-btn" onclick="checkAnswer('${ex.id}', ${idiom.id})">ПРОВЕРИТЬ</button></div>`;
-}
-
-function moveWord(btn, id) {
-    const area = document.getElementById(`res-${id}`);
-    const bank = btn.closest('.exercise-block').querySelector('.word-bank');
-    (btn.parentElement === area ? bank : area).appendChild(btn);
+    html += `<div id="feed-${ex.id}" style="margin-top:10px;"></div>
+             <button class="check-btn" onclick="checkAnswer('${ex.id}', ${idiom.id})">ПРОВЕРИТЬ</button></div>`;
+    return html;
 }
 
 function checkAnswer(exId, idiomId) {
-    const idiom = IDIOM_DATA.find(i => i.id === idiomId);
-    const ex = idiom.exercises.find(e => e.id === exId);
-    const feed = document.getElementById(`feed-${exId}`);
-    let correct = false;
-
+    const ex = IDIOM_DATA.find(i => i.id === idiomId).exercises.find(e => e.id === exId);
+    let userAns = "";
     if (ex.type === "Выбор значения") {
-        const sel = document.querySelector(`input[name="${exId}"]:checked`);
-        correct = sel && sel.value === ex.answer;
-    } else if (ex.type === "Вставка слова") {
-        correct = document.getElementById(`in-${exId}`).value.trim().toLowerCase() === ex.answer.toLowerCase();
-    } else if (ex.type === "Конструктор") {
-        correct = Array.from(document.getElementById(`res-${exId}`).children).map(c => c.innerText).join(' ') === ex.answer;
+        const selected = document.querySelector(`input[name="${exId}"]:checked`);
+        userAns = selected ? selected.value : "";
+    } else {
+        userAns = document.getElementById(`in-${exId}`).value.trim();
     }
-    feed.innerHTML = correct ? '<span style="color:#46d369;">✅ Верно!</span>' : '<span style="color:#E50914;">❌ Ошибка</span>';
-}
-
-// --- 6. ОБРАБОТЧИКИ СОБЫТИЙ ---
-function toggleCompleted(id) {
-    const idx = completedIdioms.indexOf(id);
-    if (idx > -1) completedIdioms.splice(idx, 1);
-    else completedIdioms.push(id);
-    localStorage.setItem('idioms_completed', JSON.stringify(completedIdioms));
-    renderDetail(id);
+    const isCorrect = userAns.toLowerCase() === ex.answer.toLowerCase();
+    document.getElementById(`feed-${exId}`).innerHTML = isCorrect ? '<span style="color:#46d369;">✅ Верно!</span>' : '<span style="color:#E50914;">❌ Ошибка</span>';
 }
 
 function toggleFavorite(id) {
     const idx = favorites.indexOf(id);
-    if (idx > -1) favorites.splice(idx, 1);
-    else favorites.push(id);
+    if (idx > -1) favorites.splice(idx, 1); else favorites.push(id);
     localStorage.setItem('idioms_favs', JSON.stringify(favorites));
+    renderDashboard(); // Обновляем кнопки на главной
+    if(document.getElementById('detail').style.display === 'block') renderDetail(id);
+}
+
+function toggleCompleted(id) {
+    const idx = completedIdioms.indexOf(id);
+    if (idx > -1) completedIdioms.splice(idx, 1); else completedIdioms.push(id);
+    localStorage.setItem('idioms_completed', JSON.stringify(completedIdioms));
     renderDetail(id);
 }
 
-// Навигация
+function renderFavorites() {
+    const favData = IDIOM_DATA.filter(i => favorites.includes(i.id));
+    document.getElementById('favorites-list').innerHTML = `<h2>Мой список</h2>
+        <div class="catalog-grid">${favData.map(i => `<div class="catalog-item" onclick="renderDetail(${i.id})"><img src="${i.image}"><p>${i.text}</p></div>`).join('')}</div>
+        ${favData.length === 0 ? '<p>Тут пока пусто</p>' : ''}`;
+}
+
+// 8. ИНИЦИАЛИЗАЦИЯ (Запуск)
 document.querySelectorAll('#bottom-nav button').forEach(btn => {
     btn.addEventListener('click', () => showScreen(btn.dataset.screen));
 });
 
-// Поиск
 document.addEventListener('input', (e) => {
     if (e.target.id === 'search-input') renderCatalog(e.target.value);
 });
 
-// Старт приложения
 showScreen('dashboard');
